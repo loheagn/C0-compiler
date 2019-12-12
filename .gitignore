@@ -94,3 +94,5 @@ fabric.properties
 .project
 
 .settings
+
+.classpath
