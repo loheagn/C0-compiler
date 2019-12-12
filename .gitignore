@@ -96,3 +96,5 @@ fabric.properties
 .settings
 
 .classpath
+
+*test
