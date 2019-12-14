@@ -81,7 +81,7 @@ public class Tokenizer {
     }
 
     private Token dealWithFloat(StringBuilder builder, Position position, Position currentPosition) {
-        return new Token(TokenType.FLOAT, Float.parseFloat(builder.toString()), position, currentPosition);
+        return new Token(TokenType.FLOAT, Double.parseDouble(builder.toString()), position, currentPosition);
     }
 
     private Token nextToken() throws CompileException {
