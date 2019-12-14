@@ -1,3 +1,4 @@
+.idea
 target/
 pom.xml.tag
 pom.xml.releaseBackup
@@ -98,3 +99,5 @@ fabric.properties
 .classpath
 
 *test
+
+*.iml
