@@ -15,10 +15,10 @@ import com.loheagn.utils.ExceptionString;
  */
 public class Tokenizer {
 
-    Position currentPosition;
-    List<String> content;
+    private Position currentPosition;
+    private List<String> content;
 
-    void readFile(BufferedReader reader) throws CompileException {
+    private void readFile(BufferedReader reader) throws CompileException {
         content = new ArrayList<String>();
         try {
             String line = reader.readLine();
@@ -31,7 +31,7 @@ public class Tokenizer {
         }
     }
 
-    Character nextChar() {
+    private Character nextChar() {
         currentPosition.column++;
         if (currentPosition.column > content.get(currentPosition.row).length() - 1) {
             currentPosition.column = 0;
@@ -42,7 +42,7 @@ public class Tokenizer {
         return content.get(currentPosition.row).charAt(currentPosition.column);
     }
 
-    void unreadChar() {
+    private void unreadChar() {
         currentPosition.column--;
         if (currentPosition.column < 0) {
             if (currentPosition.row == 0)
@@ -61,7 +61,7 @@ public class Tokenizer {
     }
 
     private Token dealWithDecimalInteger(StringBuilder builder, Position position, Position currentPosition) {
-        Integer value;
+        int value;
         try {
             value = Integer.parseInt(builder.toString());
         } catch (NumberFormatException e) {
@@ -71,7 +71,7 @@ public class Tokenizer {
     }
 
     private Token dealWithHexInteger(StringBuilder builder, Position position, Position currentPosition) {
-        Integer value;
+        int value;
         try {
             value = Integer.parseInt(builder.toString(), 16);
         } catch (NumberFormatException e) {
@@ -99,67 +99,72 @@ public class Tokenizer {
                     return null; // 已经读到文件尾,返回空
                 else if (JudgeChar.isSpace(currentChar))
                     state = DFAState.INITIAL_STATE;
-                else if (JudgeChar.isNondigit(currentChar))
+                else if (JudgeChar.isNonDigit(currentChar))
                     state = DFAState.IDENTIFIER_STATE;
                 else if (JudgeChar.isNonzeroDigit(currentChar))
                     state = DFAState.DECIMAL_STATE;
-                switch (currentChar) {
-                case '0':
-                    state = DFAState.ZERO_STATE;
-                    break;
-                case '.':
-                    state = DFAState.DOT_STATE;
-                    break;
-                case '*':
-                    state = DFAState.MULTI_STATE;
-                    break;
-                case '+':
-                    state = DFAState.PLUS_STATE;
-                    break;
-                case '/':
-                    state = DFAState.MINUS_STATE;
-                    break;
-                case '=':
-                    state = DFAState.ASSGN_STATE;
-                    break;
-                case '>':
-                    state = DFAState.GREATER_STATE;
-                    break;
-                case '<':
-                    state = DFAState.LESS_STATE;
-                    break;
-                case '!':
-                    state = DFAState.EXCLAMATION_MARK_STATE;
-                    break;
-                case ';':
-                    state = DFAState.SEMI_STATE;
-                    break;
-                case ',':
-                    state = DFAState.COMMA_STATE;
-                    break;
-                case '{':
-                    state = DFAState.LEFT_BRACE_STATE;
-                    break;
-                case '}':
-                    state = DFAState.RIGHT_BRACE_STATE;
-                    break;
-                case '(':
-                    state = DFAState.LEFT_PARE_STATE;
-                    break;
-                case ')':
-                    state = DFAState.RIGHT_PARE_STATE;
-                    break;
-                case ':':
-                    state = DFAState.COLON_STATE;
-                    break;
-                case '"':
-                    state = DFAState.STRING_VALUE_STATE;
-                    break;
-                case '\'':
-                    state = DFAState.SINGLE_QUOTE_STATE;
-                    break;
-                default:
-                    throw new CompileException(ExceptionString.IllegalInput, currentPosition);
+                else {
+                    switch (currentChar) {
+                        case '0':
+                            state = DFAState.ZERO_STATE;
+                            break;
+                        case '.':
+                            state = DFAState.DOT_STATE;
+                            break;
+                        case '*':
+                            state = DFAState.MULTI_STATE;
+                            break;
+                        case '+':
+                            state = DFAState.PLUS_STATE;
+                            break;
+                        case '/':
+                            state = DFAState.DIV_STATE;
+                            break;
+                        case '-':
+                            state = DFAState.MINUS_STATE;
+                            break;
+                        case '=':
+                            state = DFAState.ASSGN_STATE;
+                            break;
+                        case '>':
+                            state = DFAState.GREATER_STATE;
+                            break;
+                        case '<':
+                            state = DFAState.LESS_STATE;
+                            break;
+                        case '!':
+                            state = DFAState.EXCLAMATION_MARK_STATE;
+                            break;
+                        case ';':
+                            state = DFAState.SEMI_STATE;
+                            break;
+                        case ',':
+                            state = DFAState.COMMA_STATE;
+                            break;
+                        case '{':
+                            state = DFAState.LEFT_BRACE_STATE;
+                            break;
+                        case '}':
+                            state = DFAState.RIGHT_BRACE_STATE;
+                            break;
+                        case '(':
+                            state = DFAState.LEFT_PARE_STATE;
+                            break;
+                        case ')':
+                            state = DFAState.RIGHT_PARE_STATE;
+                            break;
+                        case ':':
+                            state = DFAState.COLON_STATE;
+                            break;
+                        case '"':
+                            state = DFAState.STRING_VALUE_STATE;
+                            break;
+                        case '\'':
+                            state = DFAState.SINGLE_QUOTE_STATE;
+                            break;
+                        default:
+                            throw new CompileException(ExceptionString.IllegalInput, currentPosition);
+                    }
                 }
                 if (state != DFAState.INITIAL_STATE) {
                     position = currentPosition;
@@ -171,7 +176,7 @@ public class Tokenizer {
                 if (currentChar == null) {
                     return dealWithIdentifier(builder, position, currentPosition);
                 } else {
-                    if (JudgeChar.isDigit(currentChar) || JudgeChar.isNondigit(currentChar)) {
+                    if (JudgeChar.isDigit(currentChar) || JudgeChar.isNonDigit(currentChar)) {
                         builder.append(currentChar);
                     } else {
                         unreadChar();
@@ -182,7 +187,7 @@ public class Tokenizer {
             }
             case ZERO_STATE: {
                 if (currentChar == null) {
-                    return new Token(TokenType.INTEGER, new Integer(0), position, currentPosition);
+                    return new Token(TokenType.INTEGER, 0, position, currentPosition);
                 } else if (currentChar == 'x' || currentChar == 'X') {
                     builder.append(currentChar);
                     state = DFAState.HEX_STATE;
@@ -194,7 +199,7 @@ public class Tokenizer {
                     state = DFAState.FLOAT_DOT_STATE;
                 } else {
                     unreadChar();
-                    return new Token(TokenType.INTEGER, new Integer(0), position, currentPosition);
+                    return new Token(TokenType.INTEGER,0, position, currentPosition);
                 }
                 break;
             }
@@ -230,19 +235,19 @@ public class Tokenizer {
             }
             case MULTI_STATE: {
                 unreadChar();
-                return new Token(TokenType.MULTI, new String("*"), position, currentPosition);
+                return new Token(TokenType.MULTI, "*", position, currentPosition);
             }
             case PLUS_STATE: {
                 unreadChar();
-                return new Token(TokenType.PLUS, new String("+"), position, currentPosition);
+                return new Token(TokenType.PLUS, "+", position, currentPosition);
             }
             case MINUS_STATE: {
                 unreadChar();
-                return new Token(TokenType.MINUS, new String("-"), position, currentPosition);
+                return new Token(TokenType.MINUS, "-", position, currentPosition);
             }
             case DIV_STATE: {
                 if (currentChar == null) {
-                    return new Token(TokenType.DIV, new String("/"), position, currentPosition);
+                    return new Token(TokenType.DIV, "/", position, currentPosition);
                 } else if (currentChar == '/') {
                     state = DFAState.COMMENT_SINGLE_STATE;
                     builder.append('/');
@@ -251,74 +256,74 @@ public class Tokenizer {
                     builder.append('*');
                 } else {
                     unreadChar();
-                    return new Token(TokenType.DIV, new String("/"), position, currentPosition);
+                    return new Token(TokenType.DIV,"/", position, currentPosition);
                 }
                 break;
             }
             case ASSGN_STATE: {
                 if (currentChar == null) {
-                    return new Token(TokenType.ASSGN, new String("="), position, currentPosition);
+                    return new Token(TokenType.ASSGN,"=", position, currentPosition);
                 } else if (currentChar == '=') {
-                    return new Token(TokenType.EQUAL, new String("=="), position, currentPosition);
+                    return new Token(TokenType.EQUAL, "==", position, currentPosition);
                 } else {
                     unreadChar();
-                    return new Token(TokenType.ASSGN, new String("="), position, currentPosition);
+                    return new Token(TokenType.ASSGN, "=", position, currentPosition);
                 }
             }
             case GREATER_STATE: {
                 if (currentChar == null) {
-                    return new Token(TokenType.GREATER, new String(">"), position, currentPosition);
+                    return new Token(TokenType.GREATER, ">", position, currentPosition);
                 } else if (currentChar == '=') {
-                    return new Token(TokenType.GE, new String(">="), position, currentPosition);
+                    return new Token(TokenType.GE, ">=", position, currentPosition);
                 } else {
                     unreadChar();
-                    return new Token(TokenType.GREATER, new String(">"), position, currentPosition);
+                    return new Token(TokenType.GREATER, ">", position, currentPosition);
                 }
             }
             case LESS_STATE: {
                 if (currentChar == null) {
-                    return new Token(TokenType.LESS, new String("<"), position, currentPosition);
+                    return new Token(TokenType.LESS, "<", position, currentPosition);
                 } else if (currentChar == '=') {
-                    return new Token(TokenType.LE, new String("<="), position, currentPosition);
+                    return new Token(TokenType.LE, "<=", position, currentPosition);
                 } else {
                     unreadChar();
-                    return new Token(TokenType.LESS, new String("<"), position, currentPosition);
+                    return new Token(TokenType.LESS, "<", position, currentPosition);
                 }
             }
             case EXCLAMATION_MARK_STATE: {
                 if (currentChar == null || currentChar != '=') {
                     throw new CompileException(ExceptionString.IllegalInput, currentPosition);
                 } else {
-                    return new Token(TokenType.NEQ, new String("!="), position, currentPosition);
+                    return new Token(TokenType.NEQ, "!=", position, currentPosition);
                 }
             }
             case SEMI_STATE: {
                 unreadChar();
-                return new Token(TokenType.SEMI, new String(";"), position, currentPosition);
+                return new Token(TokenType.SEMI,";", position, currentPosition);
             }
             case COMMA_STATE: {
                 unreadChar();
-                return new Token(TokenType.COMMA, new String(","), position, currentPosition);
+                return new Token(TokenType.COMMA, ",", position, currentPosition);
             }
             case LEFT_BRACE_STATE: {
                 unreadChar();
-                return new Token(TokenType.LEFT_BRACE, new String("{"), position, currentPosition);
+                return new Token(TokenType.LEFT_BRACE, "{", position, currentPosition);
             }
             case RIGHT_BRACE_STATE: {
                 unreadChar();
-                return new Token(TokenType.RIGHT_BRACE, new String("}"), position, currentPosition);
+                return new Token(TokenType.RIGHT_BRACE, "}", position, currentPosition);
             }
             case LEFT_PARE_STATE: {
                 unreadChar();
-                return new Token(TokenType.LEFT_PARE, new String("("), position, currentPosition);
+                return new Token(TokenType.LEFT_PARE, "(", position, currentPosition);
             }
             case RIGHT_PARE_STATE: {
                 unreadChar();
-                return new Token(TokenType.RIGHT_PARE, new String(")"), position, currentPosition);
+                return new Token(TokenType.RIGHT_PARE, ")", position, currentPosition);
             }
             case COLON_STATE: {
                 unreadChar();
-                return new Token(TokenType.COLON, new String(":"), position, currentPosition);
+                return new Token(TokenType.COLON, ":", position, currentPosition);
             }
             case STRING_VALUE_STATE: {
                 if (currentChar == null) {
@@ -339,8 +344,7 @@ public class Tokenizer {
             case STRING_VALUE_ESCAPE_STATE: {
                 if (currentChar == null) {
                     throw new CompileException(ExceptionString.IllegalInput, currentPosition);
-                } else if (currentChar == 'n' || currentChar == 'r' || currentChar == '\\' || currentChar == 't'
-                        || currentChar == '\'' || currentChar == '\"') {
+                } else if (JudgeChar.isExpChar(currentChar)) {
                     state = DFAState.STRING_VALUE_STATE;
                     builder.append(currentChar);
                 } else if (currentChar == 'x') {
@@ -386,14 +390,13 @@ public class Tokenizer {
                 if (currentChar == null || currentChar != '\'') {
                     throw new CompileException(ExceptionString.IllegalInput, currentPosition);
                 } else {
-                    return new Token(TokenType.CHARACTER, new Integer(builder.charAt(0)), position, currentPosition);
+                    return new Token(TokenType.CHARACTER, builder.charAt(0), position, currentPosition);
                 }
             }
             case CHAR_EXCAPT_STATE: {
                 if (currentChar == null) {
                     throw new CompileException(ExceptionString.IllegalInput, currentPosition);
-                } else if (currentChar == 'n' || currentChar == 'r' || currentChar == '\\' || currentChar == 't'
-                        || currentChar == '\'' || currentChar == '\"') {
+                } else if (JudgeChar.isExpChar(currentChar)) {
                     state = DFAState.CHAR_VALUE_STATE;
                     if (currentChar == 'n')
                         builder.append('\n');
@@ -520,15 +523,18 @@ public class Tokenizer {
                 } else {
                     state = DFAState.COM_MULTI_STATE;
                 }
+                break;
             }
             case EQUAL_STATE: {
                 unreadChar();
-                return new Token(TokenType.EQUAL, new String("=="), position, currentPosition);
+                return new Token(TokenType.EQUAL, "==", position, currentPosition);
             }
             case NON_EQUAL_STATE: {
                 unreadChar();
-                return new Token(TokenType.NEQ, new String("!="), position, currentPosition);
+                return new Token(TokenType.NEQ,"!=", position, currentPosition);
             }
+                default:
+                    throw new IllegalStateException("Unexpected value: " + state);
             }
         }
     }

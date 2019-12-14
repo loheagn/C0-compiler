@@ -19,46 +19,44 @@ class JudgeChar {
             Arrays.asList('_', '(', ')', '[', ']', '{', '}', '<', '=', '>', '.', ',', ':', ';', '!', '?', '+', '-', '*',
                     '/', '%', '^', '&', '|', '~', '\\', '"', '\'', '`', '$', '#', '@'));
 
-    public static boolean isSpace(char currentChar) {
+    static boolean isSpace(char currentChar) {
         return Character.isWhitespace(currentChar) || currentChar == '\n' || currentChar == '\r';
     }
 
-    public static boolean isNondigit(char currentChar) {
-        return Character.isAlphabetic(currentChar);
+    static boolean isNonDigit(char currentChar) {
+        return Character.isLetter(currentChar);
     }
 
-    public static boolean isNonzeroDigit(char currentChar) {
+    static boolean isNonzeroDigit(char currentChar) {
         return Character.isDigit(currentChar) && currentChar != '0';
     }
 
-    public static boolean isDigit(char currentChar) {
+    static boolean isDigit(char currentChar) {
         return Character.isDigit(currentChar);
     }
 
-    public static boolean isHexDigit(char currentChar) {
+    static boolean isHexDigit(char currentChar) {
         return Character.isDigit(currentChar) || (currentChar >= 'a' && currentChar <= 'f')
                 || (currentChar >= 'A' && currentChar <= 'F');
     }
 
-    public static boolean isValid(char currentChar) {
-        return Character.isWhitespace(currentChar) || Character.isAlphabetic(currentChar)
+    private static boolean isValid(char currentChar) {
+        return Character.isWhitespace(currentChar) || Character.isLetter(currentChar)
                 || Character.isDigit(currentChar) || validChars.indexOf(currentChar) != -1;
     }
 
-    public static boolean isCChar(char currentChar) {
+    static boolean isCChar(char currentChar) {
         return isValid(currentChar) && currentChar != '"' && currentChar != '\\' && currentChar != '\n'
                 && currentChar != '\r';
     }
 
-    public static boolean isSChar(char currentChar) {
+    static boolean isSChar(char currentChar) {
         return isValid(currentChar) && currentChar != '\'' && currentChar != '\\' && currentChar != '\n'
                 && currentChar != '\r';
     }
-}
 
-/**
- * Utils
- */
-public class Utils {
-
+    static boolean isExpChar(char currentChar) {
+        return currentChar == 'n' || currentChar == 'r' || currentChar == '\\' || currentChar == 't'
+                || currentChar == '\'' || currentChar == '\"';
+    }
 }
