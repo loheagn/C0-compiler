@@ -22,6 +22,10 @@ public class Token {
     public Token() {
     }
 
+    public String getStringValue(){
+        return value.toString();
+    }
+
     /**
      * @param endPosition the endPosition to set
      */
