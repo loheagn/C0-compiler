@@ -2,17 +2,8 @@ package com.loheagn.ast;
 
 import com.loheagn.semanticAnalysis.InstructionBlock;
 
-public class AssignStatementAST extends ForUpdateExpressionAST {
-    private String identifier;
+public class ReturnJumpStatementAST extends JumpStatementAST {
     private ExpressionAST expressionAST;
-
-    public String getIdentifier() {
-        return identifier;
-    }
-
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
-    }
 
     public ExpressionAST getExpressionAST() {
         return expressionAST;

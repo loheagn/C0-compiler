@@ -1,6 +1,6 @@
 package com.loheagn.ast;
 
-import com.loheagn.semanticAnalysis.Instruction;
+import com.loheagn.semanticAnalysis.InstructionBlock;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,7 @@ public class CompoundStatementAST extends StatementAST {
         this.statementASTList.add(statementAST);
     }
 
-    public List<Instruction> generateInstructions() {
+    public InstructionBlock generateInstructions() {
         return null;
     }
 }

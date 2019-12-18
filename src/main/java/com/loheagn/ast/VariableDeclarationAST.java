@@ -1,6 +1,6 @@
 package com.loheagn.ast;
 
-import com.loheagn.semanticAnalysis.Instruction;
+import com.loheagn.semanticAnalysis.InstructionBlock;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +25,7 @@ public class VariableDeclarationAST extends AST {
         this.expressionAST = expressionAST;
     }
 
-    public List<Instruction> generateInstructions() {
+    public InstructionBlock generateInstructions() {
         return null;
     }
 }

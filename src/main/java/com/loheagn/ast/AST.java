@@ -1,10 +1,8 @@
 package com.loheagn.ast;
 
-import com.loheagn.semanticAnalysis.Instruction;
-
-import java.util.List;
+import com.loheagn.semanticAnalysis.InstructionBlock;
 
 public abstract class AST {
 
-    public abstract List<Instruction> generateInstructions();
+    public abstract InstructionBlock generateInstructions();
 }

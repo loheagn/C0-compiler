@@ -26,6 +26,18 @@ public class Token {
         return value.toString();
     }
 
+    public int getIntValue() {
+        return (Integer)value;
+    }
+
+    public double getDoubleValue() {
+        return (Double)value;
+    }
+
+    public Character getCharValue() {
+        return (Character)value;
+    }
+
     /**
      * @param endPosition the endPosition to set
      */

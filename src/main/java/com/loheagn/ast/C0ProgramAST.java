@@ -1,6 +1,6 @@
 package com.loheagn.ast;
 
-import com.loheagn.semanticAnalysis.Instruction;
+import com.loheagn.semanticAnalysis.InstructionBlock;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,14 +18,7 @@ public class C0ProgramAST extends AST {
         this.functionASTList.add(functionAST);
     }
 
-    public List<Instruction> generateInstructions() {
-        List<Instruction> instructions = new ArrayList<Instruction>();
-        for (VariableDeclarationAST variableDeclarationAST : this.variableDeclarationASTList) {
-            instructions.addAll(variableDeclarationAST.generateInstructions());
-        }
-        for (FunctionAST functionAST : this.functionASTList) {
-            instructions.addAll(functionAST.generateInstructions());
-        }
-        return instructions;
+    public InstructionBlock generateInstructions() {
+        return null;
     }
 }

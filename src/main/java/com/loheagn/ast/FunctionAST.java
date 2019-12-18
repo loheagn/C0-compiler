@@ -1,6 +1,6 @@
 package com.loheagn.ast;
 
-import com.loheagn.semanticAnalysis.Instruction;
+import com.loheagn.semanticAnalysis.InstructionBlock;
 import com.loheagn.semanticAnalysis.Parameter;
 import com.loheagn.semanticAnalysis.VariableType;
 
@@ -30,7 +30,7 @@ public class FunctionAST extends AST {
         this.compoundStatementAST = compoundStatementAST;
     }
 
-    public List<Instruction> generateInstructions() {
+    public InstructionBlock generateInstructions() {
         return null;
     }
 }

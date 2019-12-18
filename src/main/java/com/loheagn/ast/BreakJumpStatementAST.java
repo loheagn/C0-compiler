@@ -2,8 +2,8 @@ package com.loheagn.ast;
 
 import com.loheagn.semanticAnalysis.InstructionBlock;
 
-public class SemiStatementAST extends StatementAST {
+public class BreakJumpStatementAST extends JumpStatementAST {
     public InstructionBlock generateInstructions() {
-        return new InstructionBlock();
+        return null;
     }
 }
