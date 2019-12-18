@@ -2,24 +2,26 @@ package com.loheagn.ast;
 
 import com.loheagn.semanticAnalysis.InstructionBlock;
 import com.loheagn.semanticAnalysis.Parameter;
-import com.loheagn.semanticAnalysis.VariableType;
+import com.loheagn.semanticAnalysis.IdentifierType;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class FunctionAST extends AST {
 
-    private VariableType functionType;
+    private IdentifierType functionType;
     private String name;
     private List<Parameter> parameters = new ArrayList<Parameter>();
     private CompoundStatementAST compoundStatementAST;
+
+    //todo
 
     public void setParameters(List<Parameter> parameters) {
         this.parameters = parameters;
     }
 
-    public void setFunctionType(VariableType variableType) {
-        this.functionType = variableType;
+    public void setFunctionType(IdentifierType identifierType) {
+        this.functionType = identifierType;
     }
 
     public void setName(String name) {

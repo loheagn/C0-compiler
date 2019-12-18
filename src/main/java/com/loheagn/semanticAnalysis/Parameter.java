@@ -3,7 +3,7 @@ package com.loheagn.semanticAnalysis;
 public class Parameter {
 
     private boolean isConst;
-    private VariableType variableType;
+    private IdentifierType identifierType;
     private String name;
 
     public boolean isConst() {
@@ -14,12 +14,12 @@ public class Parameter {
         isConst = aConst;
     }
 
-    public VariableType getVariableType() {
-        return variableType;
+    public IdentifierType getIdentifierType() {
+        return identifierType;
     }
 
-    public void setVariableType(VariableType variableType) {
-        this.variableType = variableType;
+    public void setIdentifierType(IdentifierType identifierType) {
+        this.identifierType = identifierType;
     }
 
     public String getName() {

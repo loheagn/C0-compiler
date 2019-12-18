@@ -3,7 +3,7 @@ package com.loheagn.grammaAnalysis;
 import com.loheagn.ast.*;
 import com.loheagn.semanticAnalysis.Parameter;
 import com.loheagn.semanticAnalysis.RelationOperatorType;
-import com.loheagn.semanticAnalysis.VariableType;
+import com.loheagn.semanticAnalysis.IdentifierType;
 import com.loheagn.tokenizer.Token;
 import com.loheagn.tokenizer.TokenType;
 import com.loheagn.utils.CompileException;
@@ -117,7 +117,7 @@ public class GrammaAnalyser {
         if (token == null || !JudgeToken.isTypeSpecifier(token)) {
             throw new CompileException(ExceptionString.FunctionIncomplete, position);
         }
-        functionAST.setFunctionType(VariableType.getVariableType(token.getStringValue()));
+        functionAST.setFunctionType(IdentifierType.getVariableType(token.getStringValue()));
         token = nextToken();
         if (token == null || token.getType() != TokenType.IDENTIFIER) {
             throw new CompileException(ExceptionString.FunctionIncomplete, position);
@@ -164,7 +164,7 @@ public class GrammaAnalyser {
                     if (token == null || !JudgeToken.isTypeSpecifier(token))
                         throw new CompileException(ExceptionString.FunctionIncomplete, position);
                 } else {
-                    parameter.setVariableType(VariableType.getVariableType(token.getStringValue()));
+                    parameter.setIdentifierType(IdentifierType.getVariableType(token.getStringValue()));
                     token = nextToken();
                     if (token == null || token.getType() != TokenType.IDENTIFIER)
                         throw new CompileException(ExceptionString.FunctionIncomplete, position);
