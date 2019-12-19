@@ -1,6 +1,7 @@
 package com.loheagn.ast;
 
 import com.loheagn.semanticAnalysis.InstructionBlock;
+import com.loheagn.utils.CompileException;
 
 public class WhileLoopStatementAST extends LoopStatementAST {
     private ConditionAST conditionAST;
@@ -22,7 +23,7 @@ public class WhileLoopStatementAST extends LoopStatementAST {
         this.statementAST = statementAST;
     }
 
-    public InstructionBlock generateInstructions() {
+    public InstructionBlock generateInstructions() throws CompileException {
         return null;
     }
 }

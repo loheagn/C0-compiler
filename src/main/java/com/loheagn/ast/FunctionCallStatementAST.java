@@ -1,6 +1,7 @@
 package com.loheagn.ast;
 
 import com.loheagn.semanticAnalysis.InstructionBlock;
+import com.loheagn.utils.CompileException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,7 @@ public class FunctionCallStatementAST extends ForUpdateExpressionAST {
         this.expressionASTList = expressionASTList;
     }
 
-    public InstructionBlock generateInstructions() {
+    public InstructionBlock generateInstructions() throws CompileException {
         return null;
     }
 }

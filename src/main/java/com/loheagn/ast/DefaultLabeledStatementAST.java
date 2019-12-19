@@ -1,6 +1,7 @@
 package com.loheagn.ast;
 
 import com.loheagn.semanticAnalysis.InstructionBlock;
+import com.loheagn.utils.CompileException;
 
 public class DefaultLabeledStatementAST extends LabeledStatementAST {
 
@@ -10,7 +11,7 @@ public class DefaultLabeledStatementAST extends LabeledStatementAST {
         this.statementAST = statementAST;
     }
 
-    public InstructionBlock generateInstructions() {
+    public InstructionBlock generateInstructions() throws CompileException {
         return null;
     }
 }

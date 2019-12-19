@@ -40,7 +40,7 @@ public class Table {
      */
     public static void popLocalVariables() {
         if(variableTable.size()<=0) return;
-        int level = variableTable.get(variableTable.size()-1).getLevel();
+        int level = Stack.getLevel();
         for(int i = variableTable.size()-1;i>=0;i--) {
             if(variableTable.get(i).getLevel() == level) variableTable.remove(i);
         }

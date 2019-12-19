@@ -1,8 +1,9 @@
 package com.loheagn.ast;
 
-import com.loheagn.semanticAnalysis.InstructionBlock;
-import com.loheagn.semanticAnalysis.Parameter;
-import com.loheagn.semanticAnalysis.IdentifierType;
+import com.loheagn.semanticAnalysis.*;
+import com.loheagn.tokenizer.TokenType;
+import com.loheagn.utils.CompileException;
+import com.loheagn.utils.ExceptionString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,8 +14,6 @@ public class FunctionAST extends AST {
     private String name;
     private List<Parameter> parameters = new ArrayList<Parameter>();
     private CompoundStatementAST compoundStatementAST;
-
-    //todo
 
     public void setParameters(List<Parameter> parameters) {
         this.parameters = parameters;
@@ -32,7 +31,32 @@ public class FunctionAST extends AST {
         this.compoundStatementAST = compoundStatementAST;
     }
 
-    public InstructionBlock generateInstructions() {
-        return null;
+    public InstructionBlock generateInstructions() throws CompileException {
+        // 填函数表
+        Function function = new Function();
+        function.setName(new Identifier(functionType, name));
+        for(Parameter parameter : parameters){
+            function.addParameter(new Identifier(parameter.getIdentifierType(), parameter.getName()));
+        }
+        Table.addFunction(function);
+        // 填常量表
+        Table.addConst(new ConstIdentifier(name, TokenType.STRING));
+        // 填变量表
+        int offset = 0; // 参数相对于BP指针的偏移
+        for(Parameter parameter:parameters){
+            Identifier identifier = new Identifier(parameter.getIdentifierType(), parameter.getName());
+            if(parameter.isConst()) identifier.setConst(true);
+            else identifier.setConst(false);
+            if(identifier.getType()==IdentifierType.DOUBLE) offset += 2;
+            else offset += 1;
+            identifier.setOffset(offset);
+            if(!Table.addVariable(identifier))throw new CompileException(ExceptionString.VariableDeclaration);
+        }
+        InstructionBlock instructionBlock = new InstructionBlock();
+        instructionBlock.addInstructionBlock(compoundStatementAST.generateInstructions());
+        // 清除变量表
+        Table.popLocalVariables();
+        Stack.minusLevel(); // 变量层级降低一级
+        return instructionBlock;
     }
 }

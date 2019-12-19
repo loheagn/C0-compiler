@@ -1,12 +1,20 @@
 package com.loheagn.semanticAnalysis;
 
+import com.loheagn.utils.Position;
+
 /**
  * Stack 运行时栈描述
  */
 public class Stack {
 
+    public final static int doubleOffset = 2;
+
+    public final static int intOffset = 1;
+
     private static int BP = 0;
     private static int SP = 0;
+
+    public static Position position = new Position(0,0);
 
     private static int level = 0;
 
@@ -15,6 +23,7 @@ public class Stack {
      */
     public static void newStack() {
         BP=SP = 0;
+        level = 1;  // 新的栈帧就是新的函数的开始
     }
 
     /**
@@ -25,8 +34,14 @@ public class Stack {
     }
 
     /**
+     * 递减level
+     */
+    public static void minusLevel() {
+        level--;
+    }
+
+    /**
      * 获取当前变量的位置
-     * @return
      */
     public static int getOffset() {
         return SP-BP;
@@ -35,8 +50,12 @@ public class Stack {
     /**
      * 压栈操作
      */
-    public static void push() {
-        SP++;
+    public static void push(int offset) {
+        SP += offset;
+    }
+
+    public static void pop(int offset) {
+        SP -= offset;
     }
 
     public static int getLevel() {

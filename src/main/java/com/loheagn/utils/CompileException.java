@@ -18,9 +18,14 @@ public class CompileException extends RuntimeException {
         this.position = currentPosition;
     }
 
+    public CompileException(ExceptionString message) {
+        this.message = message;
+        this.position = new Position(0,0);
+    }
+
     @Override
     public String toString() {
-        return new StringBuilder().append("Row\t").append(position.row).append(", column\t").append(position.column).append(": ").append(message.getMessage()).toString();
+        return "Row\t" + position.row + ", column\t" + position.column + ": " + message.getMessage();
     }
 
 }

@@ -14,6 +14,12 @@ public class Identifier {
         this.name = name;
     }
 
+    public Identifier(IdentifierType type, String name, int offset){
+        this.type = type;
+        this.name = name;
+        this.offset = offset;
+    }
+
     public IdentifierType getType() {
         return type;
     }

@@ -1,9 +1,9 @@
 package com.loheagn.grammaAnalysis;
 
 import com.loheagn.ast.*;
+import com.loheagn.semanticAnalysis.IdentifierType;
 import com.loheagn.semanticAnalysis.Parameter;
 import com.loheagn.semanticAnalysis.RelationOperatorType;
-import com.loheagn.semanticAnalysis.IdentifierType;
 import com.loheagn.tokenizer.Token;
 import com.loheagn.tokenizer.TokenType;
 import com.loheagn.utils.CompileException;
@@ -33,7 +33,7 @@ public class GrammaAnalyser {
             if (token == null) return c0ProgramAST;
             else if (JudgeToken.isConstQualifier(token)) {
                 unreadToken();
-                c0ProgramAST.addVariableDeclarationAST(variableDeclaration());
+                c0ProgramAST.addVariableDeclarationASTList(variableDeclaration());
             } else if (JudgeToken.isTypeSpecifier(token)) {
                 token = nextToken();
                 if (token == null || token.getType() != TokenType.IDENTIFIER)
@@ -49,7 +49,7 @@ public class GrammaAnalyser {
                         unreadToken();
                         unreadToken();
                         unreadToken();
-                        c0ProgramAST.addVariableDeclarationAST(variableDeclaration());
+                        c0ProgramAST.addVariableDeclarationASTList(variableDeclaration());
                     }
                 }
             } else {
@@ -69,40 +69,57 @@ public class GrammaAnalyser {
      * [<const-qualifier>]<type-specifier><init-declarator-list>';'
      * <init-declarator-list> ::=
      * <init-declarator>{','<init-declarator>}
-     * <init-declarator> ::=
-     * <identifier>[<initializer>]
-     * <initializer> ::=
-     * '='<expression>
      *
      * @return 返回相应类型的语法树
      */
-    private VariableDeclarationAST variableDeclaration() throws CompileException {
-        VariableDeclarationAST variableDeclarationAST = new VariableDeclarationAST();
+    private List<VariableDeclarationAST> variableDeclaration() throws CompileException {
+        List<VariableDeclarationAST> variableDeclarationASTList = new ArrayList<VariableDeclarationAST>();
+        boolean isConst = false;
+        IdentifierType identifierType;
         Token token = nextToken();
         if (token == null) {
-            return variableDeclarationAST;
+            return variableDeclarationASTList;
         } else if (JudgeToken.isConstQualifier(token)) {
-            variableDeclarationAST.setConst();
+            isConst = true;
             token = nextToken();
             if (token == null) throw new CompileException(ExceptionString.VariableDeclaration, position);
         }
         if (!JudgeToken.isTypeSpecifier(token))
             throw new CompileException(ExceptionString.VariableDeclaration, position);
-        variableDeclarationAST.addIdentifier(token.getStringValue());
+        identifierType = IdentifierType.getVariableType(token.getStringValue());
+        variableDeclarationASTList.add(variableDeclarationAST(isConst, identifierType));
         while (true) {
             token = nextToken();
             if (token == null) throw new CompileException(ExceptionString.NoSemi, position);
-            else if (token.getType() == TokenType.SEMI) return variableDeclarationAST;
-            else if (token.getType() == TokenType.ASSGN) break;
-            else if (token.getType() == TokenType.IDENTIFIER)
-                variableDeclarationAST.addIdentifier(token.getStringValue());
+            else if (token.getType() == TokenType.SEMI) return variableDeclarationASTList;
+            else if (token.getType() == TokenType.COMMA)
+                variableDeclarationASTList.add(variableDeclarationAST(isConst, identifierType));
             else throw new CompileException(ExceptionString.NoSemi, position);
         }
-        variableDeclarationAST.setExpressionAST(expression());
+    }
+
+    /**
+     * <init-declarator> ::=
+     *     <identifier>[<initializer>]
+     * <initializer> ::=
+     *     '='<expression>
+     */
+    private VariableDeclarationAST variableDeclarationAST(boolean isConst, IdentifierType type) throws CompileException {
+        VariableDeclarationAST variableDeclarationAST = new VariableDeclarationAST();
+        if(isConst)
+            variableDeclarationAST.setConst();
+        variableDeclarationAST.setType(type);
+        Token token = nextToken();
+        if(token == null || token.getType()!=TokenType.IDENTIFIER) throw new CompileException(ExceptionString.VariableDeclaration, position);
+        variableDeclarationAST.setIdentifier(token.getStringValue());
         token = nextToken();
-        if (token == null || token.getType() != TokenType.SEMI)
-            throw new CompileException(ExceptionString.NoSemi, position);
-        return variableDeclarationAST;
+        if(token != null && token.getType()==TokenType.ASSGN) {
+            variableDeclarationAST.setExpressionAST(expression());
+            return variableDeclarationAST;
+        } else {
+            unreadToken();
+            return variableDeclarationAST;
+        }
     }
 
     /**
@@ -114,8 +131,8 @@ public class GrammaAnalyser {
     private FunctionAST function() throws CompileException {
         FunctionAST functionAST = new FunctionAST();
         Token token = nextToken();
-        if (token == null || !JudgeToken.isTypeSpecifier(token)) {
-            throw new CompileException(ExceptionString.FunctionIncomplete, position);
+        if (token == null) {
+            return null;
         }
         functionAST.setFunctionType(IdentifierType.getVariableType(token.getStringValue()));
         token = nextToken();
@@ -214,7 +231,7 @@ public class GrammaAnalyser {
             token = nextToken();
             if (token == null) throw new CompileException(ExceptionString.MissingRightBrace, position);
             else if (JudgeToken.isConstQualifier(token) || JudgeToken.isTypeSpecifier(token))
-                compoundStatementAST.addVariableDeclarationAST(variableDeclaration());
+                compoundStatementAST.addVariableDeclarationASTList(variableDeclaration());
             else {
                 unreadToken();
                 break;

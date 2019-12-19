@@ -2,6 +2,7 @@ package com.loheagn.ast;
 
 import com.loheagn.semanticAnalysis.InstructionBlock;
 import com.loheagn.semanticAnalysis.RelationOperatorType;
+import com.loheagn.utils.CompileException;
 
 public class ConditionAST extends AST {
     private ExpressionAST expressionAST1;
@@ -32,7 +33,7 @@ public class ConditionAST extends AST {
         this.relationOperator = relationOperator;
     }
 
-    public InstructionBlock generateInstructions() {
+    public InstructionBlock generateInstructions() throws CompileException {
         return null;
     }
 }
