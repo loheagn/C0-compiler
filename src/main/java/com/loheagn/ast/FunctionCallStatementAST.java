@@ -1,6 +1,7 @@
 package com.loheagn.ast;
 
 import com.loheagn.ast.expressionAST.ExpressionAST;
+import com.loheagn.ast.loopAST.ForUpdateExpressionAST;
 import com.loheagn.semanticAnalysis.InstructionBlock;
 import com.loheagn.utils.CompileException;
 

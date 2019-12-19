@@ -1,5 +1,8 @@
-package com.loheagn.ast;
+package com.loheagn.ast.loopAST;
 
+import com.loheagn.ast.AssignStatementAST;
+import com.loheagn.ast.StatementAST;
+import com.loheagn.ast.conditionAST.ConditionAST;
 import com.loheagn.semanticAnalysis.InstructionBlock;
 import com.loheagn.utils.CompileException;
 

@@ -1,5 +1,6 @@
-package com.loheagn.ast;
+package com.loheagn.ast.conditionAST;
 
+import com.loheagn.ast.AST;
 import com.loheagn.ast.expressionAST.ExpressionAST;
 import com.loheagn.semanticAnalysis.InstructionBlock;
 import com.loheagn.semanticAnalysis.RelationOperatorType;

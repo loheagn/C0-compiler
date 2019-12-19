@@ -1,4 +1,4 @@
-package com.loheagn.ast;
+package com.loheagn.ast.jumpAST;
 
 import com.loheagn.ast.expressionAST.ExpressionAST;
 import com.loheagn.semanticAnalysis.InstructionBlock;
