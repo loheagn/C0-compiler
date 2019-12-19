@@ -1,5 +1,9 @@
 package com.loheagn.semanticAnalysis;
 
+import com.loheagn.tokenizer.TokenType;
+import com.loheagn.utils.CompileException;
+import com.loheagn.utils.ExceptionString;
+
 public class Blocks {
 
     public static InstructionBlock pushZero(){
@@ -41,6 +45,47 @@ public class Blocks {
                 }
             }
         }
+        return instructionBlock;
+    }
+
+    /**
+     *
+     * @param operator  操作符
+     * @param type  要计算的两个值的类型
+     * @return  返回的指令集
+     */
+    public static InstructionBlock computeTwoExpressions(TokenType operator, IdentifierType type) throws CompileException {
+        InstructionBlock instructionBlock = new InstructionBlock();
+        if(operator == TokenType.PLUS) {
+            if(type == IdentifierType.DOUBLE) {
+                instructionBlock.addInstruction(new Instruction(OperationType.dadd,null,null));
+            } else {
+                instructionBlock.addInstruction(new Instruction(OperationType.iadd,null, null));
+            }
+        } else if (operator == TokenType.MINUS) {
+            if(type == IdentifierType.DOUBLE) {
+                instructionBlock.addInstruction(new Instruction(OperationType.dsub,null,null));
+            } else {
+                instructionBlock.addInstruction(new Instruction(OperationType.isub,null, null));
+            }
+        } else if(operator == TokenType.MULTI) {
+            if(type == IdentifierType.DOUBLE) {
+                instructionBlock.addInstruction(new Instruction(OperationType.dmul,null,null));
+            } else {
+                instructionBlock.addInstruction(new Instruction(OperationType.imul,null, null));
+            }
+        } else if(operator == TokenType.DIV) {
+            if(type == IdentifierType.DOUBLE) {
+                instructionBlock.addInstruction(new Instruction(OperationType.ddiv,null,null));
+            } else {
+                instructionBlock.addInstruction(new Instruction(OperationType.idiv,null, null));
+            }
+        } else {
+            throw new CompileException(ExceptionString.CanNotCompute);
+        }
+        if(type == IdentifierType.DOUBLE) Stack.pop(Stack.doubleOffset);
+        else Stack.pop(Stack.intOffset);
+        instructionBlock.setType(type);
         return instructionBlock;
     }
 }

@@ -14,4 +14,12 @@ public enum IdentifierType {
         }
         return NOVarType;
     }
+
+    public static IdentifierType getBiggerType(IdentifierType type1, IdentifierType type2){
+        if(type1 == IdentifierType.CHAR) return type2;
+        else if(type1 == IdentifierType.INT) {
+            if(type2 == IdentifierType.DOUBLE) return IdentifierType.DOUBLE;
+            else return type1;
+        } else return IdentifierType.DOUBLE;
+    }
 }

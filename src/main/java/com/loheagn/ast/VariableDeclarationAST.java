@@ -1,7 +1,9 @@
 package com.loheagn.ast;
 
+import com.loheagn.ast.expressionAST.ExpressionAST;
 import com.loheagn.semanticAnalysis.*;
 import com.loheagn.utils.CompileException;
+import com.loheagn.utils.ExceptionString;
 
 /**
  * 声明变量
@@ -17,6 +19,8 @@ public class VariableDeclarationAST extends AST {
     private ExpressionAST expressionAST;
 
     public InstructionBlock generateInstructions() throws CompileException {
+        if(this.type == IdentifierType.VOID) throw new CompileException(ExceptionString.VoidVariable);
+        if(isConst && expressionAST == null) throw new CompileException(ExceptionString.ConstVariableNeedValue);
         InstructionBlock instructionBlock = new InstructionBlock();
         // 计算表达式的值,最终给的结果肯定是放在栈顶上
         InstructionBlock expressionInstructionBlock;
