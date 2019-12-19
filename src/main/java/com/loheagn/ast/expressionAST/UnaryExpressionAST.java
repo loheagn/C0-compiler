@@ -4,6 +4,7 @@ import com.loheagn.ast.FunctionCallStatementAST;
 import com.loheagn.semanticAnalysis.*;
 import com.loheagn.tokenizer.TokenType;
 import com.loheagn.utils.CompileException;
+import com.loheagn.utils.ExceptionString;
 
 public class UnaryExpressionAST extends ExpressionAST {
     private TokenType operator;
@@ -38,6 +39,7 @@ public class UnaryExpressionAST extends ExpressionAST {
             expression.setType(IdentifierType.INT);
         } else if(primaryExpression instanceof Character) {
             expression.addInstruction(new Instruction(OperationType.ipush, new Integer((Character)primaryExpression),null));
+            expression.addInstruction(new Instruction(OperationType.i2c,null, null));
             Stack.push(Stack.intOffset);
             expression.setType(IdentifierType.CHAR);
         } else if(primaryExpression instanceof Double) {
@@ -48,6 +50,7 @@ public class UnaryExpressionAST extends ExpressionAST {
         } else{
             assert primaryExpression instanceof FunctionCallStatementAST;
             expression = ((FunctionCallStatementAST) primaryExpression).generateInstructions();
+            if(expression.getType() == IdentifierType.VOID) throw new CompileException(ExceptionString.ComputeVoid);
         }
         instructionBlock.addInstructionBlock(expression);
         instructionBlock.setType(expression.getType());

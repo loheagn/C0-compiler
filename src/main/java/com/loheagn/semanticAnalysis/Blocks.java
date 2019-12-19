@@ -89,13 +89,10 @@ public class Blocks {
         return instructionBlock;
     }
 
-    public static InstructionBlock loadIdentifier(String name){
+    public static InstructionBlock loadIdentifier(String name) throws CompileException {
         InstructionBlock instructionBlock = new InstructionBlock();
         Identifier identifier = Table.getVariable(name);
-        int levelGap = 0;
-        if(identifier.getLevel() == 0) levelGap = 1;
-        instructionBlock.addInstruction(new Instruction(OperationType.loada, levelGap, identifier.getOffset()));
-        Stack.push(Stack.intOffset);
+        instructionBlock.addInstructionBlock(loadAddress(identifier));
         if(identifier.getType() == IdentifierType.DOUBLE) {
             instructionBlock.addInstruction(new Instruction(OperationType.dload, null, null));
             Stack.push(Stack.doubleOffset - Stack.intOffset);
@@ -105,6 +102,44 @@ public class Blocks {
             instructionBlock.addInstruction(new Instruction(OperationType.iload, null, null));
         }
         instructionBlock.setType(identifier.getType());
+        return instructionBlock;
+    }
+
+    /**
+     * 根据标识符的名字,加载一个变量的地址
+     * @param name  变量的名字
+     * @return  加载这个地址所需要的指令
+     */
+    public static InstructionBlock loadAddress(String name) throws CompileException {
+        Identifier identifier = Table.getVariable(name);
+        return loadAddress(identifier);
+    }
+
+    /**
+     * 对上面那个方法的重载
+     */
+    public static InstructionBlock loadAddress(Identifier identifier) throws CompileException {
+        int levelGap = 0;
+        if(identifier.getLevel() == 0) levelGap = 1;
+        InstructionBlock instructionBlock = new InstructionBlock();
+        instructionBlock.addInstruction(new Instruction(OperationType.loada, levelGap, identifier.getOffset()));
+        Stack.push(Stack.intOffset);
+        return instructionBlock;
+    }
+
+    public static InstructionBlock storeVariable(IdentifierType identifierType) throws CompileException {
+        InstructionBlock instructionBlock = new InstructionBlock();
+        if(identifierType == IdentifierType.DOUBLE) {
+            instructionBlock.addInstruction(new Instruction(OperationType.dstore,null,null));
+            Stack.pop(Stack.doubleOffset + Stack.intOffset);
+        } else if(identifierType == IdentifierType.CHAR) {
+            instructionBlock.addInstruction(new Instruction(OperationType.aload, null,null));
+            Stack.pop(Stack.intOffset);
+        } else {
+            instructionBlock.addInstruction(new Instruction(OperationType.iload, null,null));
+            Stack.pop(Stack.intOffset);
+        }
+        instructionBlock.setType(IdentifierType.VOID);
         return instructionBlock;
     }
 }
