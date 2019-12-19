@@ -1,7 +1,7 @@
 package com.loheagn.semanticAnalysis;
 
 public enum OperationType {
-    iPush("ipush",5), i2c("i2c", 1), i2d("i2d", 1), d2i("d2i", 1), iadd("iadd",1), dadd("dadd", 1), isub("isub", 1), dsub("dsub", 1), imul("imul", 1), dmul("dmul", 1), idiv("idiv", 1), ddiv("ddiv",1), ineg("ineg", 1), dneg("dneg", 1);
+    iPush("ipush",5), i2c("i2c", 1), i2d("i2d", 1), d2i("d2i", 1), iadd("iadd",1), dadd("dadd", 1), isub("isub", 1), dsub("dsub", 1), imul("imul", 1), dmul("dmul", 1), idiv("idiv", 1), ddiv("ddiv",1), ineg("ineg", 1), dneg("dneg", 1), loada("loada", 7), loadc("loadc", 3), iload("iload",1),dload("dload",1), aload("aload", 1),ipush("ipush",5);
     private String value;
     private int length;
 

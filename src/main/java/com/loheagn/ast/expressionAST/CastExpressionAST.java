@@ -1,5 +1,7 @@
 package com.loheagn.ast.expressionAST;
 
+import com.loheagn.semanticAnalysis.Blocks;
+import com.loheagn.semanticAnalysis.IdentifierType;
 import com.loheagn.semanticAnalysis.InstructionBlock;
 import com.loheagn.tokenizer.TokenType;
 import com.loheagn.utils.CompileException;
@@ -7,6 +9,16 @@ import com.loheagn.utils.CompileException;
 public class CastExpressionAST extends ExpressionAST {
     private TokenType typeSpecifiers;
     private UnaryExpressionAST unaryExpressionAST;
+
+
+    public InstructionBlock generateInstructions() throws CompileException {
+        IdentifierType type = IdentifierType.getVariableType(this.typeSpecifiers.getValue());
+        InstructionBlock instructionBlock = new InstructionBlock();
+        InstructionBlock expressionBlock = unaryExpressionAST.generateInstructions();
+        instructionBlock.addInstructionBlock(Blocks.castTopType(expressionBlock.getType(), type));
+        instructionBlock.setType(type);
+        return instructionBlock;
+    }
 
     public TokenType getTypeSpecifiers() {
         return typeSpecifiers;
@@ -24,7 +36,4 @@ public class CastExpressionAST extends ExpressionAST {
         this.unaryExpressionAST = unaryExpressionAST;
     }
 
-    public InstructionBlock generateInstructions() throws CompileException {
-        return null;
-    }
 }

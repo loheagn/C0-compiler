@@ -1,5 +1,8 @@
 package com.loheagn.semanticAnalysis;
 
+import com.loheagn.utils.CompileException;
+import com.loheagn.utils.ExceptionString;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,25 +17,24 @@ public class Table {
      * @param identifier    要插入的变量
      * @return  如果变量表中没有重复的,也就是说之前没有定义过 则说明插入是成功的,否则返回假
      */
-    public static boolean addVariable(Identifier identifier) {
+    public static void addVariable(Identifier identifier) throws CompileException {
         for(int i=variableTable.size()-1;i>=0;i--) {
             if(variableTable.get(i).getLevel() != identifier.getLevel()) break;
-            else if(variableTable.get(i).getName().equals(identifier.getName())) return false;
+            else if(variableTable.get(i).getName().equals(identifier.getName())) throw new CompileException(ExceptionString.IdentifierDuplicateDefinition);
         }
         identifier.setOffset(Stack.getOffset());
         identifier.setLevel(Stack.getLevel());
         variableTable.add(identifier);
-        return true;
     }
 
     /**
      * 获取一个变量的地址,也就是该变量相对于当前栈帧BP指针的偏移
      */
-    public static Integer getVariableAddress (String name) {
+    public static Identifier getVariable (String name) throws CompileException {
         for(int i = variableTable.size()-1;i>=0;i--){
-            if(variableTable.get(i).getName().equals(name)) return variableTable.get(i).getOffset();
+            if(variableTable.get(i).getName().equals(name)) return variableTable.get(i);
         }
-        return null;
+        throw new CompileException(ExceptionString.IdentifierNotDefined);
     }
 
     /**
@@ -51,19 +53,21 @@ public class Table {
         return constTable.size()-1;
     }
 
-    public static int getConstIndex(Object o) {
+    public static int getConstIndex(Object o) throws CompileException {
         for(ConstIdentifier identifier:constTable){
             if(identifier.getValue().equals(o)) return constTable.indexOf(identifier);
         }
-        return -1;
+        throw new CompileException(ExceptionString.ConstNotFound);
     }
 
-    public static boolean addFunction(Function function){
+    public static void addFunction(Function function)throws CompileException {
+        for(Identifier identifier : variableTable){
+            if(function.getName().getName().equals(identifier.getName())) throw new CompileException(ExceptionString.IdentifierDuplicateDefinition);
+        }
         for(Function function1:functionTable) {
-            if(function.getName().getName().equals(function1.getName().getName())) return false;
+            if(function.getName().getName().equals(function1.getName().getName())) throw new  CompileException(ExceptionString.IdentifierDuplicateDefinition);
         }
         functionTable.add(function);
-        return true;
     }
 
     public static int getFunctionIndex(String name) {

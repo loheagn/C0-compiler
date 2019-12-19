@@ -3,7 +3,6 @@ package com.loheagn.ast;
 import com.loheagn.semanticAnalysis.*;
 import com.loheagn.tokenizer.TokenType;
 import com.loheagn.utils.CompileException;
-import com.loheagn.utils.ExceptionString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +49,7 @@ public class FunctionAST extends AST {
             if(identifier.getType()==IdentifierType.DOUBLE) offset += 2;
             else offset += 1;
             identifier.setOffset(offset);
-            if(!Table.addVariable(identifier))throw new CompileException(ExceptionString.VariableDeclaration);
+            Table.addVariable(identifier);
         }
         InstructionBlock instructionBlock = new InstructionBlock();
         instructionBlock.addInstructionBlock(compoundStatementAST.generateInstructions());

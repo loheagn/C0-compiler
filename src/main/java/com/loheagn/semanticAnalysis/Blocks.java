@@ -88,4 +88,23 @@ public class Blocks {
         instructionBlock.setType(type);
         return instructionBlock;
     }
+
+    public static InstructionBlock loadIdentifier(String name){
+        InstructionBlock instructionBlock = new InstructionBlock();
+        Identifier identifier = Table.getVariable(name);
+        int levelGap = 0;
+        if(identifier.getLevel() == 0) levelGap = 1;
+        instructionBlock.addInstruction(new Instruction(OperationType.loada, levelGap, identifier.getOffset()));
+        Stack.push(Stack.intOffset);
+        if(identifier.getType() == IdentifierType.DOUBLE) {
+            instructionBlock.addInstruction(new Instruction(OperationType.dload, null, null));
+            Stack.push(Stack.doubleOffset - Stack.intOffset);
+        } else if(identifier.getType() == IdentifierType.CHAR) {
+            instructionBlock.addInstruction(new Instruction(OperationType.aload, null, null));
+        } else {
+            instructionBlock.addInstruction(new Instruction(OperationType.iload, null, null));
+        }
+        instructionBlock.setType(identifier.getType());
+        return instructionBlock;
+    }
 }
