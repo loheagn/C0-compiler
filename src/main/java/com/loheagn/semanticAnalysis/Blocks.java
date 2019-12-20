@@ -199,7 +199,7 @@ public class Blocks {
         return instructionBlock;
     }
 
-    public static InstructionBlock jump(RelationOperatorType operatorType, int offset) {
+    public static InstructionBlock jumpNot(RelationOperatorType operatorType, int offset) {
         InstructionBlock instructionBlock = new InstructionBlock();
         OperationType operationType;
         switch (operatorType) {
@@ -220,6 +220,34 @@ public class Blocks {
                 break;
             default:
                 operationType = OperationType.jge;
+                break;
+        }
+        instructionBlock.addInstruction(new Instruction(operationType, offset,null));
+        Stack.pop(Stack.intOffset);
+        return instructionBlock;
+    }
+
+    public static InstructionBlock jumpYes(RelationOperatorType operatorType, int offset) {
+        InstructionBlock instructionBlock = new InstructionBlock();
+        OperationType operationType;
+        switch (operatorType) {
+            case EQUAL:
+                operationType = OperationType.je;
+                break;
+            case NOT_EQUAL:
+                operationType = OperationType.jne;
+                break;
+            case LE:
+                operationType = OperationType.jle;
+                break;
+            case GREATER:
+                operationType = OperationType.jg;
+                break;
+            case GE:
+                operationType = OperationType.jge;
+                break;
+            default:
+                operationType = OperationType.jl;
                 break;
         }
         instructionBlock.addInstruction(new Instruction(operationType, offset,null));

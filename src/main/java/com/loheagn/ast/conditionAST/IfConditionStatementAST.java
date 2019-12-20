@@ -14,7 +14,7 @@ public class IfConditionStatementAST extends ConditionStatementAST {
         InstructionBlock instructionBlock = new InstructionBlock();
         instructionBlock.addInstructionBlock(conditionAST.generateInstructions());
         InstructionBlock ifBlock = ifStatementAST.generateInstructions();
-        instructionBlock.addInstructionBlock(Blocks.jump(conditionAST.getRelationOperator(),ifBlock.getInstructions().size()));
+        instructionBlock.addInstructionBlock(Blocks.jumpNot(conditionAST.getRelationOperator(),ifBlock.getInstructions().size()));
         instructionBlock.addInstructionBlock(elseStatementAST.generateInstructions());
         return instructionBlock;
     }
