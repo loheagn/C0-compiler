@@ -1,13 +1,15 @@
 package com.loheagn.semanticAnalysis;
 
 public enum OperationType {
-    iPush("ipush",5), i2c("i2c", 1), i2d("i2d", 1), d2i("d2i", 1), iadd("iadd",1), dadd("dadd", 1), isub("isub", 1), dsub("dsub", 1), imul("imul", 1), dmul("dmul", 1), idiv("idiv", 1), ddiv("ddiv",1), ineg("ineg", 1), dneg("dneg", 1), loada("loada", 7), loadc("loadc", 3), iload("iload",1),dload("dload",1), aload("aload", 1),ipush("ipush",5), dstore("dstore", 1), astore("astore", 1), istore("istore",1), call("call", 3);
+    iPush("ipush",4,0), i2c("i2c", 0,0), i2d("i2d", 0,0), d2i("d2i", 0,0), iadd("iadd",0,0), dadd("dadd", 0,0), isub("isub", 0,0), dsub("dsub", 0,0), imul("imul", 0,0), dmul("dmul", 0,0), idiv("idiv", 0,0), ddiv("ddiv",0,0), ineg("ineg", 0,0), dneg("dneg", 0,0), loada("loada", 2,4), loadc("loadc", 2,0), iload("iload",0,0),dload("dload",0,0), aload("aload", 0,0),ipush("ipush",4,0), dstore("dstore", 0,0), astore("astore", 0,0), istore("istore",0,0), call("call", 2,0), iprint("iprint",0,0), cprint("cprint", 0,0), dprint("dprint",0,0),sprint("sprint",0,0);
     private String value;
-    private int length;
+    private int length1;
+    private int length2;
 
-    OperationType(String value, int length) {
+    OperationType(String value, int length1, int length2) {
         this.value = value;
-        this.length = length;
+        this.length1 = length1;
+        this.length2 = length2;
     }
 
     public String getValue() {
@@ -15,7 +17,7 @@ public enum OperationType {
     }
 
     public int getLength() {
-        return length;
+        return length1 + length2 + 1;
     }
 
     public void setValue(String value) {

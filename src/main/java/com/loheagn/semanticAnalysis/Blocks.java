@@ -142,4 +142,25 @@ public class Blocks {
         instructionBlock.setType(IdentifierType.VOID);
         return instructionBlock;
     }
+
+    public static InstructionBlock printString() throws CompileException {
+        InstructionBlock instructionBlock = new InstructionBlock();
+        instructionBlock.addInstruction(new Instruction(OperationType.sprint, 0,0));
+        Stack.pop(Stack.intOffset);
+        return instructionBlock;
+    }
+
+    public static InstructionBlock printValue(IdentifierType identifierType) throws CompileException {
+        InstructionBlock instructionBlock = new InstructionBlock();
+        if(identifierType == IdentifierType.DOUBLE) {
+            instructionBlock.addInstruction(new Instruction(OperationType.dprint, 0,0));
+            Stack.pop(Stack.doubleOffset);
+        } else if(identifierType == IdentifierType.CHAR) {
+            instructionBlock.addInstruction(new Instruction(OperationType.cprint, 0,0));
+            Stack.pop(Stack.intOffset);
+        } else if(identifierType == IdentifierType.INT) {
+            Stack.pop(Stack.intOffset);
+        } else throw new CompileException(ExceptionString.Print);
+        return instructionBlock;
+    }
 }
