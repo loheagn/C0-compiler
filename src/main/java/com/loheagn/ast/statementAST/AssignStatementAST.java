@@ -1,4 +1,4 @@
-package com.loheagn.ast;
+package com.loheagn.ast.statementAST;
 
 import com.loheagn.ast.expressionAST.ExpressionAST;
 import com.loheagn.ast.loopAST.ForUpdateExpressionAST;

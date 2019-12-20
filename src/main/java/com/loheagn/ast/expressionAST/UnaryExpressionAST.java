@@ -1,6 +1,6 @@
 package com.loheagn.ast.expressionAST;
 
-import com.loheagn.ast.FunctionCallStatementAST;
+import com.loheagn.ast.statementAST.FunctionCallStatementAST;
 import com.loheagn.semanticAnalysis.*;
 import com.loheagn.tokenizer.TokenType;
 import com.loheagn.utils.CompileException;

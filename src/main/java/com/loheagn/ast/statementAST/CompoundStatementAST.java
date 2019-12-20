@@ -1,5 +1,6 @@
-package com.loheagn.ast;
+package com.loheagn.ast.statementAST;
 
+import com.loheagn.ast.VariableDeclarationAST;
 import com.loheagn.semanticAnalysis.InstructionBlock;
 import com.loheagn.semanticAnalysis.Stack;
 import com.loheagn.semanticAnalysis.Table;

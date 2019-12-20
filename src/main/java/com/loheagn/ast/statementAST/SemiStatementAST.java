@@ -1,4 +1,4 @@
-package com.loheagn.ast;
+package com.loheagn.ast.statementAST;
 
 import com.loheagn.semanticAnalysis.InstructionBlock;
 import com.loheagn.utils.CompileException;

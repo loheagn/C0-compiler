@@ -1,6 +1,6 @@
 package com.loheagn.ast.conditionAST;
 
-import com.loheagn.ast.StatementAST;
+import com.loheagn.ast.statementAST.StatementAST;
 import com.loheagn.semanticAnalysis.InstructionBlock;
 import com.loheagn.utils.CompileException;
 

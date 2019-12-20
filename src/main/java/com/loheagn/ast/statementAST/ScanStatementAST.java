@@ -1,4 +1,4 @@
-package com.loheagn.ast;
+package com.loheagn.ast.statementAST;
 
 import com.loheagn.semanticAnalysis.Blocks;
 import com.loheagn.semanticAnalysis.Identifier;
