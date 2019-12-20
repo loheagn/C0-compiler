@@ -254,4 +254,10 @@ public class Blocks {
         Stack.pop(Stack.intOffset);
         return instructionBlock;
     }
+
+    public static InstructionBlock jump(int offset) {
+        InstructionBlock instructionBlock = new InstructionBlock();
+        instructionBlock.addInstruction(new Instruction(OperationType.jmp,offset,null));
+        return instructionBlock;
+    }
 }

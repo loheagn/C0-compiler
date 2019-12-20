@@ -32,6 +32,8 @@ public class FunctionAST extends AST {
     }
 
     public InstructionBlock generateInstructions() throws CompileException {
+        // 代码段清空
+        CodeStack.offset = 0;
         // 填函数表
         Function function = new Function();
         function.setName(new Identifier(functionType, name));

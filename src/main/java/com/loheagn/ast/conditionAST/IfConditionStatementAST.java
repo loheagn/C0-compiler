@@ -2,6 +2,7 @@ package com.loheagn.ast.conditionAST;
 
 import com.loheagn.ast.statementAST.StatementAST;
 import com.loheagn.semanticAnalysis.Blocks;
+import com.loheagn.semanticAnalysis.CodeStack;
 import com.loheagn.semanticAnalysis.InstructionBlock;
 import com.loheagn.utils.CompileException;
 
@@ -14,7 +15,7 @@ public class IfConditionStatementAST extends ConditionStatementAST {
         InstructionBlock instructionBlock = new InstructionBlock();
         instructionBlock.addInstructionBlock(conditionAST.generateInstructions());
         InstructionBlock ifBlock = ifStatementAST.generateInstructions();
-        instructionBlock.addInstructionBlock(Blocks.jumpNot(conditionAST.getRelationOperator(),ifBlock.getInstructions().size()));
+        instructionBlock.addInstructionBlock(Blocks.jumpNot(conditionAST.getRelationOperator(), CodeStack.offset + 1));
         instructionBlock.addInstructionBlock(elseStatementAST.generateInstructions());
         return instructionBlock;
     }

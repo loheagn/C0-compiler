@@ -17,6 +17,7 @@ public class Instruction {
      * 为了防止生成指令的时候少些操作数,这里要求必须给出num1和num2的值,如果没有,则要显式给出null
      */
     public Instruction(OperationType operation, Integer num1, Integer num2) {
+        CodeStack.offset ++;
         this.operation = operation;
         this.num1 = num1;
         this.num2 = num2;
