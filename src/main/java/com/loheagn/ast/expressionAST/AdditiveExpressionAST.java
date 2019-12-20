@@ -1,7 +1,6 @@
 package com.loheagn.ast.expressionAST;
 
 import com.loheagn.semanticAnalysis.Blocks;
-import com.loheagn.semanticAnalysis.IdentifierType;
 import com.loheagn.semanticAnalysis.InstructionBlock;
 import com.loheagn.tokenizer.TokenType;
 import com.loheagn.utils.CompileException;
@@ -22,15 +21,7 @@ public class AdditiveExpressionAST extends ExpressionAST {
        for(int i = 0;i<this.operators.size();i++) {
            expression2 = multiplicativeExpressionASTList.get(i+1).generateInstructions();
            // 为了简便,我们对操作符左右两个表达式的结果都进行类型转换
-           // 首先选出类型转换的目标类型
-           IdentifierType dstType = IdentifierType.getBiggerType(expression1.getType(), expression2.getType());
-           // 把第一个表达式的结果进行类型转换
-           instructionBlock.addInstructionBlock(Blocks.castTopType(expression1.getType(), dstType));
-           // 第二个表达式
-           instructionBlock.addInstructionBlock(expression2);
-           instructionBlock.addInstructionBlock(Blocks.castTopType(expression2.getType(), dstType));
-           // 计算两个表达式
-           instructionBlock.addInstructionBlock(Blocks.computeTwoExpressions(operators.get(i), dstType));
+           instructionBlock.addInstructionBlock(Blocks.computeTwoExpressions(expression1, expression2, operators.get(i)));
            // 准备下一次循环
            expression1 = expression2;
        }

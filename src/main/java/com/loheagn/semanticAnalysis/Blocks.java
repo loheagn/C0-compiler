@@ -89,6 +89,24 @@ public class Blocks {
         return instructionBlock;
     }
 
+    /**
+     * 计算两个表达式
+     * 返回的指令块包括 对expression1的类型转换, 对expression2的计算, 对expression2的类型转换, 对这两个表达式的计算
+     */
+    public static InstructionBlock computeTwoExpressions(InstructionBlock expression1, InstructionBlock expression2, TokenType operator) {
+        InstructionBlock instructionBlock = new InstructionBlock();
+        // 首先选出类型转换的目标类型
+        IdentifierType dstType = IdentifierType.getBiggerType(expression1.getType(), expression2.getType());
+        // 把第一个表达式的结果进行类型转换
+        instructionBlock.addInstructionBlock(Blocks.castTopType(expression1.getType(), dstType));
+        // 第二个表达式
+        instructionBlock.addInstructionBlock(expression2);
+        instructionBlock.addInstructionBlock(Blocks.castTopType(expression2.getType(), dstType));
+        // 计算两个表达式
+        instructionBlock.addInstructionBlock(Blocks.computeTwoExpressions(operator, dstType));
+        return instructionBlock;
+    }
+
     public static InstructionBlock loadIdentifier(String name) throws CompileException {
         InstructionBlock instructionBlock = new InstructionBlock();
         Identifier identifier = Table.getVariable(name);
@@ -178,6 +196,34 @@ public class Blocks {
             Stack.push(Stack.intOffset);
         } else throw new CompileException(ExceptionString.Scan);
         instructionBlock.setType(identifierType);
+        return instructionBlock;
+    }
+
+    public static InstructionBlock jump(RelationOperatorType operatorType, int offset) {
+        InstructionBlock instructionBlock = new InstructionBlock();
+        OperationType operationType;
+        switch (operatorType) {
+            case EQUAL:
+                operationType = OperationType.jne;
+                break;
+            case NOT_EQUAL:
+                operationType = OperationType.je;
+                break;
+            case LE:
+                operationType = OperationType.jg;
+                break;
+            case GREATER:
+                operationType = OperationType.jle;
+                break;
+            case GE:
+                operationType = OperationType.jl;
+                break;
+            default:
+                operationType = OperationType.jge;
+                break;
+        }
+        instructionBlock.addInstruction(new Instruction(operationType, offset,null));
+        Stack.pop(Stack.intOffset);
         return instructionBlock;
     }
 }
