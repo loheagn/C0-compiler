@@ -70,10 +70,14 @@ public class Table {
         functionTable.add(function);
     }
 
-    public static int getFunctionIndex(String name) {
+    public static Function getFunction(String name) throws CompileException {
         for(Function function:functionTable) {
-            if(function.getName().getName().equals(name)) return functionTable.indexOf(function);
+            if(function.getName().getName().equals(name)) return function;
         }
-        return -1;
+        throw new CompileException(ExceptionString.FunctionNotFound);
+    }
+
+    public static int getFunctionIndex(String name) {
+        return getConstIndex(name);
     }
 }

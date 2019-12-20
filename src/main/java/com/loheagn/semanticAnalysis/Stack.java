@@ -58,6 +58,12 @@ public class Stack {
         SP -= offset;
     }
 
+    public static void push(IdentifierType type) {
+        if(type == IdentifierType.VOID) push(0);
+        else if(type == IdentifierType.DOUBLE) push(doubleOffset);
+        else push(intOffset);
+    }
+
     public static int getLevel() {
         return level;
     }
