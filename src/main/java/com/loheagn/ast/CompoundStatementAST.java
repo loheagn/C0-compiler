@@ -1,6 +1,8 @@
 package com.loheagn.ast;
 
 import com.loheagn.semanticAnalysis.InstructionBlock;
+import com.loheagn.semanticAnalysis.Stack;
+import com.loheagn.semanticAnalysis.Table;
 import com.loheagn.utils.CompileException;
 
 import java.util.ArrayList;
@@ -10,6 +12,22 @@ public class CompoundStatementAST extends StatementAST {
 
     private List<VariableDeclarationAST> variableDeclarationASTList = new ArrayList<VariableDeclarationAST>();
     private List<StatementAST> statementASTList = new ArrayList<StatementAST>();
+
+    public InstructionBlock generateInstructions() throws CompileException {
+        InstructionBlock instructionBlock = new InstructionBlock();
+        // new level
+        Stack.newLevel();
+        for(VariableDeclarationAST variableDeclarationAST: variableDeclarationASTList) {
+            instructionBlock.addInstructionBlock(variableDeclarationAST.generateInstructions());
+        }
+        for(StatementAST statementAST : statementASTList) {
+            instructionBlock.addInstructionBlock(statementAST.generateInstructions());
+        }
+        // 清空本级作用域的变量表
+        Table.popLocalVariables();
+        Stack.minusLevel();
+        return instructionBlock;
+    }
 
     public void addVariableDeclarationAST(VariableDeclarationAST variableDeclarationAST){
         this.variableDeclarationASTList.add(variableDeclarationAST);
@@ -21,9 +39,5 @@ public class CompoundStatementAST extends StatementAST {
 
     public void addStatementASTList(StatementAST statementAST) {
         this.statementASTList.add(statementAST);
-    }
-
-    public InstructionBlock generateInstructions() throws CompileException {
-        return null;
     }
 }
