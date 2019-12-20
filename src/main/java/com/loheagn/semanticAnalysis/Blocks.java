@@ -159,8 +159,25 @@ public class Blocks {
             instructionBlock.addInstruction(new Instruction(OperationType.cprint, 0,0));
             Stack.pop(Stack.intOffset);
         } else if(identifierType == IdentifierType.INT) {
+            instructionBlock.addInstruction(new Instruction(OperationType.iprint, 0,0));
             Stack.pop(Stack.intOffset);
         } else throw new CompileException(ExceptionString.Print);
+        return instructionBlock;
+    }
+
+    public static InstructionBlock scanValue(IdentifierType identifierType) throws CompileException {
+        InstructionBlock instructionBlock = new InstructionBlock();
+        if(identifierType == IdentifierType.DOUBLE) {
+            instructionBlock.addInstruction(new Instruction(OperationType.dscan, 0,0));
+            Stack.push(Stack.doubleOffset);
+        } else if(identifierType == IdentifierType.CHAR) {
+            instructionBlock.addInstruction(new Instruction(OperationType.cscan, 0,0));
+            Stack.push(Stack.intOffset);
+        } else if(identifierType == IdentifierType.INT) {
+            instructionBlock.addInstruction(new Instruction(OperationType.iscan, 0,0));
+            Stack.push(Stack.intOffset);
+        } else throw new CompileException(ExceptionString.Scan);
+        instructionBlock.setType(identifierType);
         return instructionBlock;
     }
 }
