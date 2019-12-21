@@ -54,7 +54,7 @@ public class UnaryExpressionAST extends ExpressionAST {
         }
         instructionBlock.addInstructionBlock(expression);
         instructionBlock.setType(expression.getType());
-        if(operator == TokenType.MINUS) {
+        if(operator !=null && operator == TokenType.MINUS) {
             if(instructionBlock.getType() == VariableType.DOUBLE) instructionBlock.addInstruction(new Instruction(OperationType.dneg,null,null));
             else instructionBlock.addInstruction(new Instruction(OperationType.ineg, null,null));
         }

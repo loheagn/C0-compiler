@@ -38,6 +38,11 @@ public class Token {
         return (Character)value;
     }
 
+    @Override
+    public String toString() {
+        return getStringValue();
+    }
+
     /**
      * @param endPosition the endPosition to set
      */

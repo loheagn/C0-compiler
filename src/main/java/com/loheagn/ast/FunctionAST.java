@@ -32,7 +32,10 @@ public class FunctionAST extends AST {
     }
 
     public InstructionBlock generateInstructions() throws CompileException {
-        // 设置当期函数的返回类型
+        Stack.isFunctionCompoundStatement = true;
+        // 新的栈帧开始
+        Stack.newStack();
+        // 设置当前函数的返回类型
         CodeStack.functionType = functionType;
         // 代码段清空
         CodeStack.offset = 0;
@@ -50,17 +53,17 @@ public class FunctionAST extends AST {
         Stack.newLevel();
         int offset = 0; // 参数相对于BP指针的偏移
         for(Parameter parameter:parameters){
+            Variable variable = new Variable(parameter.getVariableType(), parameter.getName(),offset,1);
             if(parameter.getVariableType()== VariableType.DOUBLE) offset += Stack.doubleOffset;
             else offset += Stack.intOffset;
             Stack.push(parameter.getVariableType());
-            Variable variable = new Variable(parameter.getVariableType(), parameter.getName(),offset,1);
             if(parameter.isConst()) variable.setConst(true);
             else variable.setConst(false);
             Table.addVariable(variable);
         }
         InstructionBlock instructionBlock = new InstructionBlock();
         instructionBlock.addInstructionBlock(compoundStatementAST.generateInstructions());
-        instructionBlock.addInstruction(new Instruction(OperationType.ret,0,0));
+        instructionBlock.addInstruction(new Instruction(OperationType.ret,null,null));
         return instructionBlock;
     }
 

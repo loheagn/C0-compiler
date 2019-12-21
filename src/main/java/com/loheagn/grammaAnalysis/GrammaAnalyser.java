@@ -36,7 +36,7 @@ public class GrammaAnalyser {
      *
      * @return 返回整个C0程序对应的总的那棵语法树
      */
-    private C0ProgramAST C0Program() throws CompileException {
+    public C0ProgramAST C0Program() throws CompileException {
         C0ProgramAST c0ProgramAST = new C0ProgramAST();
         // 首先是判断多条变量声明的循环
         while (true) {
@@ -182,7 +182,7 @@ public class GrammaAnalyser {
             while (true) {
                 token = nextToken();
                 if (token == null) throw new CompileException(ExceptionString.FunctionIncomplete, position);
-                if (JudgeToken.isTypeSpecifier(token) || JudgeToken.isConstQualifier(token)) {
+                if (!JudgeToken.isTypeSpecifier(token) && !JudgeToken.isConstQualifier(token)) {
                     unreadToken();
                     break;
                 }
@@ -243,8 +243,10 @@ public class GrammaAnalyser {
         while (true) {
             token = nextToken();
             if (token == null) throw new CompileException(ExceptionString.MissingRightBrace, position);
-            else if (JudgeToken.isConstQualifier(token) || JudgeToken.isTypeSpecifier(token))
+            else if (JudgeToken.isConstQualifier(token) || JudgeToken.isTypeSpecifier(token)){
+                unreadToken();
                 compoundStatementAST.addVariableDeclarationASTList(variableDeclaration());
+            }
             else {
                 unreadToken();
                 break;
@@ -323,15 +325,10 @@ public class GrammaAnalyser {
         if (token == null) throw new CompileException(ExceptionString.NoSemi, position);
         else if (JudgeToken.isRelationOperator(token)) {
             conditionAST.setRelationOperator(RelationOperatorType.getRelationOperatorType(token.getStringValue()));
-            token = nextToken();
-            if (token == null) throw new CompileException(ExceptionString.NoSemi, position);
             conditionAST.setExpressionAST2(expression());
         } else {
             unreadToken();
         }
-        token = nextToken();
-        if (token == null || token.getType() != TokenType.SEMI)
-            throw new CompileException(ExceptionString.NoSemi, position);
         return conditionAST;
     }
 
@@ -358,8 +355,7 @@ public class GrammaAnalyser {
         token = nextToken();
         if (token != null && token.getType() == TokenType.ELSE) {
             ifConditionStatementAST.setElseStatementAST(statement());
-        }
-        unreadToken();
+        } else unreadToken();
         return ifConditionStatementAST;
     }
 
@@ -383,7 +379,7 @@ public class GrammaAnalyser {
             throw new CompileException(ExceptionString.NoWhile, position);
         whileLoopStatementAST.setConditionAST(parseConditionPa());
         whileLoopStatementAST.setStatementAST(statement());
-        return null;
+        return whileLoopStatementAST;
     }
 
     private ForUpdateExpressionAST forUpdateExpression() throws CompileException {
@@ -638,8 +634,13 @@ public class GrammaAnalyser {
                 break;
             }
             token = nextToken();
-            if (token == null || !JudgeToken.isTypeSpecifier(token))
+            if (token == null)
                 throw new CompileException(ExceptionString.ExpressionIncomplete, position);
+            if(!JudgeToken.isTypeSpecifier(token)) {
+                unreadToken();
+                unreadToken();
+                break;
+            }
             if (token.getType() == TokenType.VOID) throw new CompileException(ExceptionString.CastToVoid, position);
             if (typeSpecifier == null) typeSpecifier = token.getType();
             token = nextToken();
@@ -676,9 +677,10 @@ public class GrammaAnalyser {
                 unreadToken();
                 unreadToken();
                 unaryExpressionAST.setPrimaryExpression(functionCallStatement());
+            } else {
+                unreadToken();
+                unaryExpressionAST.setPrimaryExpression(identifier);
             }
-            unreadToken();
-            unaryExpressionAST.setPrimaryExpression(identifier);
         } else if (token.getType() == TokenType.INTEGER) unaryExpressionAST.setPrimaryExpression(token.getIntValue());
         else if (token.getType() == TokenType.DOUBLE) unaryExpressionAST.setPrimaryExpression(token.getDoubleValue());
         else if (token.getType() == TokenType.CHARACTER) unaryExpressionAST.setPrimaryExpression(token.getCharValue());

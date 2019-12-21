@@ -34,7 +34,7 @@ public class VariableDeclarationAST extends AST {
         int offset = Stack.getOffset();
         if(this.type == VariableType.DOUBLE) offset -= Stack.doubleOffset;
         else offset -= Stack.intOffset;
-        Table.addVariable(new Variable(this.type, this.identifier, offset));
+        Table.addVariable(new Variable(this.type, this.identifier, offset, Stack.getLevel()));
         // 填充当前的指令块
         instructionBlock.addInstructionBlock(expressionInstructionBlock);
         instructionBlock.addInstructionBlock(castInstructionBlock);

@@ -5,6 +5,7 @@ import com.loheagn.ast.statementAST.StatementAST;
 import com.loheagn.semanticAnalysis.Blocks;
 import com.loheagn.semanticAnalysis.CodeStack;
 import com.loheagn.semanticAnalysis.InstructionBlock;
+import com.loheagn.semanticAnalysis.Stack;
 import com.loheagn.utils.CompileException;
 
 public class WhileLoopStatementAST extends LoopStatementAST {
@@ -12,13 +13,26 @@ public class WhileLoopStatementAST extends LoopStatementAST {
     private StatementAST statementAST;
 
     public InstructionBlock generateInstructions() throws CompileException {
-        int forOffset = CodeStack.offset + 1;   // 这里加1正好就是condition的第一条语句的开始位置,也就是说,主体部分完成后,要跳转到这里重新执行条件语句判断执行
-        InstructionBlock condition = conditionAST.generateInstructions();
-        InstructionBlock statement = statementAST.generateInstructions();
+        int forOffset = CodeStack.offset;   // 也就是说,主体部分完成后,要跳转到这里重新执行条件语句判断执行
+        InstructionBlock condition = null;
+        InstructionBlock statement = null;
+        if(conditionAST!=null) {
+            condition = conditionAST.generateInstructions();
+        }
+        if(statementAST!=null) {
+            statement = statementAST.generateInstructions();
+        }
         InstructionBlock instructionBlock = new InstructionBlock();
-        instructionBlock.addInstructionBlock(condition);
-        instructionBlock.addInstructionBlock(Blocks.jumpNot(conditionAST.getRelationOperator(), CodeStack.offset + 2));     // 这里加2是因为还有两条跳转指令没有生成
-        instructionBlock.addInstructionBlock(statement);
+        if(condition!=null) {
+            instructionBlock.addInstructionBlock(condition);
+            Stack.pop(instructionBlock.getType());
+            instructionBlock.addInstructionBlock(Blocks.jumpNot(conditionAST.getRelationOperator(), CodeStack.offset + 2, instructionBlock.getType()));     // 这里加2是因为还有两条跳转指令没有生成
+        } else {
+            instructionBlock.addInstructionBlock(Blocks.nop());
+        }
+        if(statement!=null) {
+            instructionBlock.addInstructionBlock(statement);
+        }
         instructionBlock.addInstructionBlock(Blocks.jump(forOffset));
         return instructionBlock;
     }

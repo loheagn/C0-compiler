@@ -32,9 +32,9 @@ public class ConstIdentifier {
         if(type== TokenType.STRING) {
             return "S " + "\""+ value.toString() +"\"";
         } else if(type == TokenType.DOUBLE) {
-            return "D " + "\"0x"+ Long.toHexString(Double.doubleToLongBits((Double) value))  +"\"";
+            return "D " + "0x"+ Long.toHexString(Double.doubleToLongBits((Double) value));
         } else {
-            return "I " + "\"0x"+ Long.toHexString((Integer) value)  +"\"";
+            return "I " + "0x"+ Long.toHexString((Integer) value);
         }
     }
 }

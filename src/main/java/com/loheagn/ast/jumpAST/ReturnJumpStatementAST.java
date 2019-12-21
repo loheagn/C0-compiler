@@ -21,7 +21,7 @@ public class ReturnJumpStatementAST extends JumpStatementAST {
             if(CodeStack.functionType!=VariableType.VOID) throw new CompileException(ExceptionString.ReturnTypeError);
         }
         instructionBlock.addInstructionBlock(Blocks.returnBlock(CodeStack.functionType));
-        return expressionAST.generateInstructions();
+        return instructionBlock;
     }
 
     public ExpressionAST getExpressionAST() {

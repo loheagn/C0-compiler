@@ -18,7 +18,7 @@ public class PrintStatementAST extends StatementAST {
                 instructionBlock.addInstructionBlock(((ExpressionAST) object).generateInstructions());
                 instructionBlock.addInstructionBlock(Blocks.printValue(instructionBlock.getType()));
             } else {
-                instructionBlock.addInstruction(new Instruction(OperationType.loadc, Table.addConst(new ConstIdentifier((String) object, TokenType.STRING)), 0));
+                instructionBlock.addInstruction(new Instruction(OperationType.loadc, Table.addConst(new ConstIdentifier((String) object, TokenType.STRING)), null));
                 Stack.push(Stack.intOffset);
                 instructionBlock.addInstructionBlock(Blocks.printString());
             }

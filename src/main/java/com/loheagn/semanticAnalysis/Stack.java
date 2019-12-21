@@ -25,7 +25,6 @@ public class Stack {
      */
     public static void newStack() {
         BP=SP = 0;
-        level = 1;  // 新的栈帧就是新的函数的开始
     }
 
     /**
@@ -58,6 +57,12 @@ public class Stack {
 
     public static void pop(int offset) {
         SP -= offset;
+    }
+
+    public static void pop(VariableType variableType) {
+        if(variableType == VariableType.VOID) pop(0);
+        else if(variableType == VariableType.DOUBLE) pop(doubleOffset);
+        else pop(intOffset);
     }
 
     public static void push(VariableType type) {

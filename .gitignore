@@ -101,3 +101,12 @@ fabric.properties
 *test
 
 *.iml
+
+input
+
+out
+
+out.o
+
+sample
+

@@ -57,7 +57,7 @@ public class Table {
     public static void popLocalVariables() {
         if(identifierTable.size()<=0) return;
         final int level = Stack.getLevel();
-        identifierTable = identifierTable.stream().filter(identifier -> identifier.level==level).collect(Collectors.toList());
+        identifierTable = identifierTable.stream().filter(identifier -> !(identifier.level==level && identifier.what instanceof Variable)).collect(Collectors.toList());
     }
 
     public static int addConst(ConstIdentifier constIdentifier) {
@@ -77,6 +77,7 @@ public class Table {
             if(identifierTable.get(i).level == 0 && function.getName().getName().equals(identifierTable.get(i).name)) throw new CompileException(ExceptionString.IdentifierDuplicateDefinition);
         }
         identifierTable.add(new Identifier(function.getName().getName(), 0, function));
+        functionTable.add(function);
     }
 
     public static Function getFunction(String name) throws CompileException {
@@ -104,7 +105,7 @@ public class Table {
 
     public static List<String> generateFunctionTable () {
         List<String> result = new ArrayList<String>();
-        result.add(".functions");
+        result.add(".functions:");
         for(Function function : functionTable) {
             result.add("" + functionTable.indexOf(function) + " " + getConstIndex(function.getName().getName()) + " " + function.toString());
         }

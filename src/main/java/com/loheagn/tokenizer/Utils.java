@@ -46,12 +46,12 @@ class JudgeChar {
     }
 
     static boolean isCChar(char currentChar) {
-        return isValid(currentChar) && currentChar != '"' && currentChar != '\\' && currentChar != '\n'
+        return isValid(currentChar) && currentChar != '\'' && currentChar != '\\' && currentChar != '\n'
                 && currentChar != '\r';
     }
 
     static boolean isSChar(char currentChar) {
-        return isValid(currentChar) && currentChar != '\'' && currentChar != '\\' && currentChar != '\n'
+        return isValid(currentChar) && currentChar != '"' && currentChar != '\\' && currentChar != '\n'
                 && currentChar != '\r';
     }
 

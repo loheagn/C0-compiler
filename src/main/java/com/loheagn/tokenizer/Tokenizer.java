@@ -1,14 +1,14 @@
 package com.loheagn.tokenizer;
 
+import com.loheagn.utils.CompileException;
+import com.loheagn.utils.ExceptionString;
+import com.loheagn.utils.Position;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.loheagn.utils.Position;
-import com.loheagn.utils.CompileException;
-import com.loheagn.utils.ExceptionString;
 
 /**
  * Tokenizer
@@ -17,6 +17,11 @@ public class Tokenizer {
 
     private Position currentPosition;
     private List<String> content;
+
+    public Tokenizer(){
+        this.currentPosition = new Position(0,-1);
+        content = new ArrayList<String>();
+    }
 
     private void readFile(BufferedReader reader) throws CompileException {
         content = new ArrayList<String>();
@@ -81,7 +86,7 @@ public class Tokenizer {
     }
 
     private Token dealWithFloat(StringBuilder builder, Position position, Position currentPosition) {
-        return new Token(TokenType.FLOAT, Double.parseDouble(builder.toString()), position, currentPosition);
+        return new Token(TokenType.DOUBLE, Double.parseDouble(builder.toString()), position, currentPosition);
     }
 
     private Token nextToken() throws CompileException {
@@ -168,7 +173,8 @@ public class Tokenizer {
                 }
                 if (state != DFAState.INITIAL_STATE) {
                     position = currentPosition;
-                    builder.append(currentChar);
+                    if(currentChar!='\'' && currentChar!='"')
+                        builder.append(currentChar);
                 }
                 break;
             }

@@ -19,11 +19,11 @@ public class FunctionCallStatementAST extends ForUpdateExpressionAST {
         if(function.getParameters().size()!=expressionASTList.size()) throw new CompileException(ExceptionString.FunctionParametersNumberNotMatch);
         for(int i = 0;i<expressionASTList.size();i++) {
             instructionBlock.addInstructionBlock(expressionASTList.get(i).generateInstructions());
-            instructionBlock.addInstructionBlock(Blocks.castTopType(instructionBlock.getType(), function.getParameters().get(i).getType()));
+            instructionBlock.addInstructionBlock(Blocks.castTopType(instructionBlock.getType(), function.getParameters().get(i).getVariableType()));
         }
         instructionBlock.addInstruction(new Instruction(OperationType.call, Table.getFunctionIndex(identifier),null));
-        Stack.push(function.getName().getType());
-        instructionBlock.setType(function.getName().getType());
+        Stack.push(function.getName().getVariableType());
+        instructionBlock.setType(function.getName().getVariableType());
         return instructionBlock;
     }
 
