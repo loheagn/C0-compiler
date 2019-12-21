@@ -1,17 +1,21 @@
 package com.loheagn.grammaAnalysis;
 
-import com.loheagn.ast.*;
-import com.loheagn.ast.conditionAST.*;
+import com.loheagn.ast.C0ProgramAST;
+import com.loheagn.ast.FunctionAST;
+import com.loheagn.ast.VariableDeclarationAST;
+import com.loheagn.ast.conditionAST.ConditionAST;
+import com.loheagn.ast.conditionAST.ConditionStatementAST;
+import com.loheagn.ast.conditionAST.IfConditionStatementAST;
 import com.loheagn.ast.expressionAST.*;
-import com.loheagn.ast.jumpAST.BreakJumpStatementAST;
-import com.loheagn.ast.jumpAST.ContinueJumpStatementAST;
 import com.loheagn.ast.jumpAST.JumpStatementAST;
 import com.loheagn.ast.jumpAST.ReturnJumpStatementAST;
-import com.loheagn.ast.loopAST.*;
+import com.loheagn.ast.loopAST.ForUpdateExpressionAST;
+import com.loheagn.ast.loopAST.LoopStatementAST;
+import com.loheagn.ast.loopAST.WhileLoopStatementAST;
 import com.loheagn.ast.statementAST.*;
-import com.loheagn.semanticAnalysis.VariableType;
 import com.loheagn.semanticAnalysis.Parameter;
 import com.loheagn.semanticAnalysis.RelationOperatorType;
+import com.loheagn.semanticAnalysis.VariableType;
 import com.loheagn.tokenizer.Token;
 import com.loheagn.tokenizer.TokenType;
 import com.loheagn.utils.CompileException;
@@ -108,20 +112,21 @@ public class GrammaAnalyser {
 
     /**
      * <init-declarator> ::=
-     *     <identifier>[<initializer>]
+     * <identifier>[<initializer>]
      * <initializer> ::=
-     *     '='<expression>
+     * '='<expression>
      */
     private VariableDeclarationAST variableDeclarationAST(boolean isConst, VariableType type) throws CompileException {
         VariableDeclarationAST variableDeclarationAST = new VariableDeclarationAST();
-        if(isConst)
+        if (isConst)
             variableDeclarationAST.setConst();
         variableDeclarationAST.setType(type);
         Token token = nextToken();
-        if(token == null || token.getType()!=TokenType.IDENTIFIER) throw new CompileException(ExceptionString.VariableDeclaration, position);
+        if (token == null || token.getType() != TokenType.IDENTIFIER)
+            throw new CompileException(ExceptionString.VariableDeclaration, position);
         variableDeclarationAST.setIdentifier(token.getStringValue());
         token = nextToken();
-        if(token != null && token.getType()==TokenType.ASSGN) {
+        if (token != null && token.getType() == TokenType.ASSGN) {
             variableDeclarationAST.setExpressionAST(expression());
             return variableDeclarationAST;
         } else {
@@ -266,14 +271,11 @@ public class GrammaAnalyser {
                 unreadToken();
                 return compoundStatement();
             }
-            case IF:
-            case SWITCH: {
+            case IF: {
                 unreadToken();
                 return conditionStatement();
             }
-            case WHILE:
-            case FOR:
-            case DO: {
+            case WHILE: {
                 unreadToken();
                 return loopStatement();
             }
@@ -309,7 +311,8 @@ public class GrammaAnalyser {
 
     /**
      * <condition> ::=
-     *      <expression>[<relational-operator><expression>]
+     * <expression>[<relational-operator><expression>]
+     *
      * @return 返回条件语句的语法树
      */
     private ConditionAST condition() throws CompileException {
@@ -317,37 +320,28 @@ public class GrammaAnalyser {
         conditionAST.setExpressionAST1(expression());
         // 试读下一个token
         Token token = nextToken();
-        if(token == null) throw new CompileException(ExceptionString.NoSemi, position);
-        else if(JudgeToken.isRelationOperator(token)){
+        if (token == null) throw new CompileException(ExceptionString.NoSemi, position);
+        else if (JudgeToken.isRelationOperator(token)) {
             conditionAST.setRelationOperator(RelationOperatorType.getRelationOperatorType(token.getStringValue()));
             token = nextToken();
-            if(token == null) throw new CompileException(ExceptionString.NoSemi, position);
+            if (token == null) throw new CompileException(ExceptionString.NoSemi, position);
             conditionAST.setExpressionAST2(expression());
         } else {
             unreadToken();
         }
         token = nextToken();
-        if(token == null || token.getType()!=TokenType.SEMI) throw new CompileException(ExceptionString.NoSemi, position);
+        if (token == null || token.getType() != TokenType.SEMI)
+            throw new CompileException(ExceptionString.NoSemi, position);
         return conditionAST;
     }
 
     /**
      * <condition-statement> ::=
-     *      'if' '(' <condition> ')' <statement> ['else' <statement>]
-     *     |'switch' '(' <expression> ')' '{' {<labeled-statement>} '}'
+     * 'if' '(' <condition> ')' <statement> ['else' <statement>]
+     * |'switch' '(' <expression> ')' '{' {<labeled-statement>} '}'
      */
     private ConditionStatementAST conditionStatement() throws CompileException {
-        Token token = nextToken();
-        if(token == null) throw new CompileException(ExceptionString.MissingRightBrace, position);
-        else if(token.getType()==TokenType.IF){
-            unreadToken();
-            return ifConditionStatement();
-        }
-        else if(token.getType() == TokenType.SWITCH){
-            unreadToken();
-            return switchConditionStatement();
-        }
-        else throw new CompileException(ExceptionString.OtherSyntaxError, position);
+        return ifConditionStatement();
     }
 
     /**
@@ -356,12 +350,13 @@ public class GrammaAnalyser {
     private IfConditionStatementAST ifConditionStatement() throws CompileException {
         IfConditionStatementAST ifConditionStatementAST = new IfConditionStatementAST();
         Token token = nextToken();
-        if(token == null || token.getType()!=TokenType.IF) throw new CompileException(ExceptionString.NoIf, position);
+        if (token == null || token.getType() != TokenType.IF)
+            throw new CompileException(ExceptionString.NoIf, position);
         ifConditionStatementAST.setConditionAST(parseConditionPa());
         ifConditionStatementAST.setIfStatementAST(statement());
         // 试读
         token = nextToken();
-        if(token != null && token.getType()==TokenType.ELSE) {
+        if (token != null && token.getType() == TokenType.ELSE) {
             ifConditionStatementAST.setElseStatementAST(statement());
         }
         unreadToken();
@@ -369,95 +364,13 @@ public class GrammaAnalyser {
     }
 
     /**
-     * 'switch' '(' <expression> ')' '{' {<labeled-statement>} '}'
-     */
-    private SwitchConditionStatementAST switchConditionStatement() throws CompileException {
-        SwitchConditionStatementAST switchConditionStatementAST = new SwitchConditionStatementAST();
-        Token token = nextToken();
-        if(token == null || token.getType()!= TokenType.SWITCH) throw new CompileException(ExceptionString.NoSwitch, position);
-        token = nextToken();
-        if(token==null || token.getType()!= TokenType.LEFT_PARE) throw new CompileException(ExceptionString.NoLeftPare, position);
-        switchConditionStatementAST.setExpressionAST(expression());
-        token = nextToken();
-        if(token == null || token.getType()!= TokenType.RIGHT_PARE) throw new CompileException(ExceptionString.NoRightPare, position);
-        token = nextToken();
-        if(token == null || token.getType()!=TokenType.LEFT_PARE) throw new CompileException(ExceptionString.MissingLeftBrace, position);
-        while(true) {
-            token = nextToken();
-            if(token == null) throw new CompileException(ExceptionString.MissingRightBrace, position);
-            else if(token.getType()== TokenType.RIGHT_BRACE) return switchConditionStatementAST;
-            else switchConditionStatementAST.addLabeledStatementAST(labeledStatement());
-        }
-    }
-
-    /**
-     * <labeled-statement> ::=
-     *      'case' (<integer-literal>|<char-literal>) ':' <statement>
-     *     |'default' ':' <statement>
-     */
-    private LabeledStatementAST labeledStatement() throws CompileException {
-        Token token = nextToken();
-        if(token == null) throw new CompileException(ExceptionString.MissingRightBrace, position);
-        else if(token.getType() == TokenType.CASE) {
-            unreadToken();
-            return caseLabeledStatement();
-        } else if(token.getType() == TokenType.DEFAULT) {
-            unreadToken();
-            return defaultLabeledStatementAST();
-        } else throw new CompileException(ExceptionString.OtherSyntaxError, position);
-    }
-
-    /**
-     * 'case' (<integer-literal>|<char-literal>) ':' <statement>
-     */
-    private CaseLabeledStatementAST caseLabeledStatement() throws CompileException {
-        CaseLabeledStatementAST caseLabeledStatementAST = new CaseLabeledStatementAST();
-        Token token = nextToken();
-        if(token==null || token.getType()!=TokenType.CASE) throw new CompileException(ExceptionString.NoCase, position);
-        token = nextToken();
-        if(token ==null || (token.getType()!=TokenType.INTEGER && token.getType()!=TokenType.CHARACTER)) throw new CompileException(ExceptionString.CaseIncomplete, position);
-        caseLabeledStatementAST.setValue(token.getIntValue());
-        token = nextToken();
-        if(token == null || token.getType()!= TokenType.COLON) throw new CompileException(ExceptionString.NoColon, position);
-        caseLabeledStatementAST.setStatementAST(statement());
-        return caseLabeledStatementAST;
-    }
-
-    /**
-     * 'default' ':' <statement>
-     */
-    private DefaultLabeledStatementAST defaultLabeledStatementAST() throws CompileException {
-        DefaultLabeledStatementAST defaultLabeledStatementAST = new DefaultLabeledStatementAST();
-        Token token = nextToken();
-        if(token == null || token.getType()!= TokenType.DEFAULT) throw new CompileException(ExceptionString.NODefault, position);
-        token = nextToken();
-        if(token == null || token.getType()!= TokenType.COLON) throw new CompileException(ExceptionString.NoColon, position);
-        defaultLabeledStatementAST.setStatementAST(statement());
-        return defaultLabeledStatementAST;
-    }
-
-    /**
      * <loop-statement> ::=
-     *     'while' '(' <condition> ')' <statement>
-     *    |'do' <statement> 'while' '(' <condition> ')' ';'
-     *    |'for' '('<for-init-statement> [<condition>]';' [<for-update-expression>]')' <statement>
+     * 'while' '(' <condition> ')' <statement>
+     * |'do' <statement> 'while' '(' <condition> ')' ';'
+     * |'for' '('<for-init-statement> [<condition>]';' [<for-update-expression>]')' <statement>
      */
     private LoopStatementAST loopStatement() throws CompileException {
-        Token token = nextToken();
-        if(token == null) throw new CompileException(ExceptionString.OtherSyntaxError, position);
-        switch (token.getType()) {
-            case WHILE:
-                unreadToken();
-                return whileLoopStatement();
-            case DO:
-                unreadToken();
-                return doLoopStatement();
-            case FOR:
-                unreadToken();
-                return forLoopStatement();
-            default:
-                throw new CompileException(ExceptionString.OtherSyntaxError, position);
-        }
+        return whileLoopStatement();
     }
 
     /**
@@ -466,109 +379,11 @@ public class GrammaAnalyser {
     private WhileLoopStatementAST whileLoopStatement() throws CompileException {
         WhileLoopStatementAST whileLoopStatementAST = new WhileLoopStatementAST();
         Token token = nextToken();
-        if(token == null || token.getType()!= TokenType.WHILE) throw new CompileException(ExceptionString.NoWhile, position);
+        if (token == null || token.getType() != TokenType.WHILE)
+            throw new CompileException(ExceptionString.NoWhile, position);
         whileLoopStatementAST.setConditionAST(parseConditionPa());
         whileLoopStatementAST.setStatementAST(statement());
         return null;
-    }
-
-    /**
-     * 'do' <statement> 'while' '(' <condition> ')' ';'
-     */
-    private DoLoopStatementAST doLoopStatement() throws CompileException {
-        DoLoopStatementAST doLoopStatementAST = new DoLoopStatementAST();
-        Token token = nextToken();
-        if(token == null || token.getType()!= TokenType.DO) throw new CompileException(ExceptionString.NoDo, position);
-        doLoopStatementAST.setStatementAST(statement());
-        token = nextToken();
-        if(token == null || token.getType()!= TokenType.WHILE) throw new CompileException(ExceptionString.NoWhile, position);
-        doLoopStatementAST.setConditionAST(parseConditionPa());
-        token = nextToken();
-        if(token == null || token.getType()!=TokenType.SEMI) throw new CompileException(ExceptionString.NoSemi, position);
-        return null;
-    }
-
-    /**
-     * 'for' '('<for-init-statement> [<condition>]';' [<for-update-expression>]')' <statement>
-     *     <for-init-statement> ::=
-     *     [<assignment-expression>{','<assignment-expression>}]';'
-     * <for-update-expression> ::=
-     *     (<assignment-expression>|<function-call>){','(<assignment-expression>|<function-call>)}
-     */
-    private ForLoopStatementAST forLoopStatement() throws CompileException {
-        ForLoopStatementAST forLoopStatementAST = new ForLoopStatementAST();
-        Token token = nextToken();
-        if(token == null || token.getType()!=TokenType.FOR) throw new CompileException(ExceptionString.NoFor, position);
-        token = nextToken();
-        if(token == null || token.getType()!=TokenType.LEFT_PARE) throw new CompileException(ExceptionString.NoLeftPare, position);
-        forLoopStatementAST.setAssignStatementASTList(forInitStatement());
-        token = nextToken();
-        if(token == null) throw new CompileException(ExceptionString.ForIncomplete, position);
-        if(token.getType()!=TokenType.SEMI){
-            unreadToken();
-            forLoopStatementAST.setConditionAST(condition());
-            token = nextToken();
-            if(token == null) throw new CompileException(ExceptionString.ForIncomplete, position);
-            if(token.getType()!=TokenType.SEMI) throw new CompileException(ExceptionString.NoSemi, position);
-        }
-        forLoopStatementAST.setConditionAST(null);
-        token = nextToken();
-        if(token == null) throw new CompileException(ExceptionString.ForIncomplete, position);
-        if(token.getType()!= TokenType.RIGHT_PARE) {
-            unreadToken();
-            forLoopStatementAST.setForUpdateExpressionASTS(forUpdateExpressionList());
-            token = nextToken();
-            if(token == null) throw new CompileException(ExceptionString.ForIncomplete, position);
-            if(token.getType()!=TokenType.SEMI) throw new CompileException(ExceptionString.NoRightPare, position);
-        }
-        forLoopStatementAST.setStatementAST(statement());
-        return forLoopStatementAST;
-    }
-
-    /**
-     * <for-init-statement> ::=
-     *      [<assignment-expression>{','<assignment-expression>}]';'
-     */
-    private List<AssignStatementAST> forInitStatement () throws CompileException {
-        List<AssignStatementAST> assignStatementASTList = new ArrayList<AssignStatementAST>();
-        while(true) {
-            Token token = nextToken();
-            if(token == null) throw new CompileException(ExceptionString.ForIncomplete, position);
-            if(token.getType() == TokenType.SEMI) {
-                unreadToken();
-                break;
-            }
-            unreadToken();
-            assignStatementASTList.add(assignStatement());
-            token = nextToken();
-            if(token == null) throw new CompileException(ExceptionString.ForIncomplete, position);
-            if(token.getType()!=TokenType.COMMA) {
-                unreadToken();
-                break;
-            }
-        }
-        Token token = nextToken();
-        if(token == null || token.getType()!=TokenType.SEMI) throw new CompileException(ExceptionString.NoSemi, position);
-        return assignStatementASTList;
-    }
-
-    /**
-    * <for-update-expression> ::=
-     * *     (<assignment-expression>|<function-call>){','(<assignment-expression>|<function-call>)}
-     */
-    private List<ForUpdateExpressionAST> forUpdateExpressionList() throws CompileException {
-        List<ForUpdateExpressionAST> forUpdateExpressionASTList = new ArrayList<ForUpdateExpressionAST>();
-        forUpdateExpressionASTList.add(forUpdateExpression());
-        while(true) {
-            Token token = nextToken();
-            if(token == null) throw new CompileException(ExceptionString.ForIncomplete, position);
-            if(token.getType()!=TokenType.COMMA){
-                unreadToken();
-                break;
-            }
-            forUpdateExpressionASTList.add(forUpdateExpression());
-        }
-        return forUpdateExpressionASTList;
     }
 
     private ForUpdateExpressionAST forUpdateExpression() throws CompileException {
@@ -589,113 +404,108 @@ public class GrammaAnalyser {
 
 
     /**
-     *<jump-statement> ::=
-     *      'break' ';'
-     *     |'continue' ';'
-     *     |<return-statement>
+     * <jump-statement> ::=
+     * 'break' ';'
+     * |'continue' ';'
+     * |<return-statement>
      * <return-statement> ::= 'return' [<expression>] ';'
      */
     private JumpStatementAST jumpStatement() throws CompileException {
         Token token = nextToken();
-        if(token == null) throw new CompileException(ExceptionString.OtherSyntaxError, position);
-        switch (token.getType()) {
-            case BREAK:
-                token = nextToken();
-                if(token == null || token.getType()!=TokenType.SEMI) throw new CompileException(ExceptionString.NoSemi, position);
-                return new BreakJumpStatementAST();
-            case CONTINUE:
-                token = nextToken();
-                if(token == null || token.getType()!=TokenType.SEMI) throw new CompileException(ExceptionString.NoSemi, position);
-                return new ContinueJumpStatementAST();
-            case RETURN:
-                ReturnJumpStatementAST returnJumpStatementAST = new ReturnJumpStatementAST();
-                token = nextToken();
-                if(token == null) throw new CompileException(ExceptionString.NoSemi, position);
-                if(token.getType()==TokenType.SEMI) return returnJumpStatementAST;
-                else {
-                    unreadToken();
-                    returnJumpStatementAST.setExpressionAST(expression());
-                    token = nextToken();
-                    if(token == null || token.getType()!=TokenType.SEMI) throw new CompileException(ExceptionString.NoSemi, position);
-                    return returnJumpStatementAST;
-                }
-            default:
-                throw new CompileException(ExceptionString.OtherSyntaxError,position);
+        assert token != null && token.getType() == TokenType.RETURN;
+        ReturnJumpStatementAST returnJumpStatementAST = new ReturnJumpStatementAST();
+        token = nextToken();
+        if (token == null) throw new CompileException(ExceptionString.NoSemi, position);
+        if (token.getType() == TokenType.SEMI) return returnJumpStatementAST;
+        else {
+            unreadToken();
+            returnJumpStatementAST.setExpressionAST(expression());
+            token = nextToken();
+            if (token == null || token.getType() != TokenType.SEMI)
+                throw new CompileException(ExceptionString.NoSemi, position);
+            return returnJumpStatementAST;
         }
     }
 
     /**
      * <scan-statement> ::=
-     *     'scan' '(' <identifier> ')' ';'
+     * 'scan' '(' <identifier> ')' ';'
      */
     private ScanStatementAST scanStatement() throws CompileException {
         ScanStatementAST scanStatementAST = new ScanStatementAST();
         Token token = nextToken();
-        assert token!=null && token.getType()==TokenType.SCAN;
+        assert token != null && token.getType() == TokenType.SCAN;
         token = nextToken();
-        if(token == null || token.getType()!=TokenType.LEFT_PARE) throw new CompileException(ExceptionString.NoLeftPare, position);
+        if (token == null || token.getType() != TokenType.LEFT_PARE)
+            throw new CompileException(ExceptionString.NoLeftPare, position);
         token = nextToken();
-        if(token ==null || token.getType()!=TokenType.IDENTIFIER) throw new CompileException(ExceptionString.NoIdentifier, position);
+        if (token == null || token.getType() != TokenType.IDENTIFIER)
+            throw new CompileException(ExceptionString.NoIdentifier, position);
         scanStatementAST.setVariable(token.getStringValue());
         token = nextToken();
-        if(token == null || token.getType()!=TokenType.RIGHT_PARE) throw new CompileException(ExceptionString.NoRightPare, position);
+        if (token == null || token.getType() != TokenType.RIGHT_PARE)
+            throw new CompileException(ExceptionString.NoRightPare, position);
         token = nextToken();
-        if(token == null || token.getType()!=TokenType.SEMI) throw new CompileException(ExceptionString.NoSemi, position);
+        if (token == null || token.getType() != TokenType.SEMI)
+            throw new CompileException(ExceptionString.NoSemi, position);
         return scanStatementAST;
     }
 
     /**
      * <print-statement> ::=
-     *     'print' '(' [<printable-list>] ')' ';'
+     * 'print' '(' [<printable-list>] ')' ';'
      * <printable-list>  ::=
-     *     <printable> {',' <printable>}
+     * <printable> {',' <printable>}
      * <printable> ::=
-     *     <expression> | <string-literal>
+     * <expression> | <string-literal>
      */
     private PrintStatementAST printStatement() throws CompileException {
         PrintStatementAST printStatementAST = new PrintStatementAST();
         Token token = nextToken();
-        assert token!=null;
+        assert token != null;
         token = nextToken();
-        if(token == null || token.getType()!=TokenType.LEFT_PARE) throw new CompileException(ExceptionString.NoLeftPare, position);
+        if (token == null || token.getType() != TokenType.LEFT_PARE)
+            throw new CompileException(ExceptionString.NoLeftPare, position);
         token = nextToken();
-        if(token == null) throw new CompileException(ExceptionString.PrintIncomplete, position);
-        if(token.getType()!=TokenType.RIGHT_PARE){
+        if (token == null) throw new CompileException(ExceptionString.PrintIncomplete, position);
+        if (token.getType() != TokenType.RIGHT_PARE) {
             unreadToken();
             printStatementAST.setPrintList(printableList());
             token = nextToken();
-            if(token == null || token.getType()!=TokenType.RIGHT_PARE) throw new CompileException(ExceptionString.NoRightPare, position);
+            if (token == null || token.getType() != TokenType.RIGHT_PARE)
+                throw new CompileException(ExceptionString.NoRightPare, position);
         }
         token = nextToken();
-        if(token == null || token.getType()!=TokenType.SEMI) throw new CompileException(ExceptionString.NoSemi, position);
+        if (token == null || token.getType() != TokenType.SEMI)
+            throw new CompileException(ExceptionString.NoSemi, position);
         return printStatementAST;
     }
 
     /**
      * <printable-list>  ::=
-     *     <printable> {',' <printable>}
+     * <printable> {',' <printable>}
      * <printable> ::=
-     *     <expression> | <string-literal>
+     * <expression> | <string-literal>
      */
-    private List<Object> printableList()throws CompileException{
+    private List<Object> printableList() throws CompileException {
         List<Object> objectList = new ArrayList<Object>();
         Token token = nextToken();
-        assert token!=null;
-        if(token.getType()==TokenType.STRING) objectList.add(token.getStringValue());
+        assert token != null;
+        if (token.getType() == TokenType.STRING) objectList.add(token.getStringValue());
         else {
             unreadToken();
             objectList.add(expression());
         }
-        while(true) {
+        while (true) {
             token = nextToken();
-            if(token == null) throw new CompileException(ExceptionString.PrintIncomplete, position);
-            if(token.getType()!= TokenType.COMMA) {
+            if (token == null) throw new CompileException(ExceptionString.PrintIncomplete, position);
+            if (token.getType() != TokenType.COMMA) {
                 unreadToken();
                 break;
             }
             token = nextToken();
-            if(token == null) throw new CompileException(ExceptionString.PrintIncomplete, position);
-            if(token.getType()==TokenType.STRING) objectList.add(token.getStringValue());
+            if (token == null) throw new CompileException(ExceptionString.PrintIncomplete, position);
+            if (token.getType() == TokenType.STRING) objectList.add(token.getStringValue());
             else {
                 unreadToken();
                 objectList.add(expression());
@@ -706,54 +516,57 @@ public class GrammaAnalyser {
 
     /**
      * <assignment-expression> ::=
-     *     <identifier><assignment-operator><expression>
+     * <identifier><assignment-operator><expression>
      */
     private AssignStatementAST assignStatement() throws CompileException {
         AssignStatementAST assignStatementAST = new AssignStatementAST();
         Token token = nextToken();
-        assert token!=null && token.getType()==TokenType.IDENTIFIER;
+        assert token != null && token.getType() == TokenType.IDENTIFIER;
         assignStatementAST.setIdentifier(token.getStringValue());
         token = nextToken();
-        if(token==null || token.getType()!=TokenType.ASSGN) throw new CompileException(ExceptionString.AssignStatementIncomplete, position);
+        if (token == null || token.getType() != TokenType.ASSGN)
+            throw new CompileException(ExceptionString.AssignStatementIncomplete, position);
         assignStatementAST.setExpressionAST(expression());
         return assignStatementAST;
     }
 
     /**
      * <function-call> ::=
-     *     <identifier> '(' [<expression-list>] ')'
+     * <identifier> '(' [<expression-list>] ')'
      * <expression-list> ::=
-     *     <expression>{','<expression>}
+     * <expression>{','<expression>}
      */
     private FunctionCallStatementAST functionCallStatement() throws CompileException {
         FunctionCallStatementAST functionCallStatementAST = new FunctionCallStatementAST();
         Token token = nextToken();
-        assert token!=null && token.getType()==TokenType.IDENTIFIER;
+        assert token != null && token.getType() == TokenType.IDENTIFIER;
         functionCallStatementAST.setIdentifier(token.getStringValue());
         token = nextToken();
-        if(token == null || token.getType()!=TokenType.LEFT_PARE) throw new CompileException(ExceptionString.NoLeftPare, position);
+        if (token == null || token.getType() != TokenType.LEFT_PARE)
+            throw new CompileException(ExceptionString.NoLeftPare, position);
         token = nextToken();
-        if(token == null) throw new CompileException(ExceptionString.FunctionIncomplete, position);
-        if(token.getType()!= TokenType.RIGHT_PARE){
+        if (token == null) throw new CompileException(ExceptionString.FunctionIncomplete, position);
+        if (token.getType() != TokenType.RIGHT_PARE) {
             unreadToken();
             functionCallStatementAST.setExpressionASTList(expressionList());
             token = nextToken();
-            if(token == null || token.getType()!=TokenType.RIGHT_PARE) throw new CompileException(ExceptionString.NoRightPare, position);
+            if (token == null || token.getType() != TokenType.RIGHT_PARE)
+                throw new CompileException(ExceptionString.NoRightPare, position);
         }
         return functionCallStatementAST;
     }
 
     /**
      * <expression-list> ::=
-     *     <expression>{','<expression>}
+     * <expression>{','<expression>}
      */
     private List<ExpressionAST> expressionList() throws CompileException {
         List<ExpressionAST> expressionASTList = new ArrayList<ExpressionAST>();
         expressionASTList.add(expression());
-        while(true) {
+        while (true) {
             Token token = nextToken();
-            if(token == null) throw new CompileException(ExceptionString.NoRightPare, position);
-            if(token.getType()!=TokenType.COMMA) {
+            if (token == null) throw new CompileException(ExceptionString.NoRightPare, position);
+            if (token.getType() != TokenType.COMMA) {
                 unreadToken();
                 break;
             }
@@ -764,7 +577,7 @@ public class GrammaAnalyser {
 
     /**
      * <expression> ::=
-     *     <additive-expression>
+     * <additive-expression>
      */
     private ExpressionAST expression() throws CompileException {
         return additiveExpression();
@@ -772,15 +585,15 @@ public class GrammaAnalyser {
 
     /**
      * <additive-expression> ::=
-     *      <multiplicative-expression>{<additive-operator><multiplicative-expression>}
+     * <multiplicative-expression>{<additive-operator><multiplicative-expression>}
      */
     private AdditiveExpressionAST additiveExpression() throws CompileException {
         AdditiveExpressionAST additiveExpressionAST = new AdditiveExpressionAST();
         additiveExpressionAST.addMultiplicativeExpressionAST(multiplicativeExpression());
-        while(true) {
+        while (true) {
             Token token = nextToken();
-            if(token==null) throw new CompileException(ExceptionString.NoSemi, position);
-            if(!JudgeToken.isAdditiveOperator(token)) {
+            if (token == null) throw new CompileException(ExceptionString.NoSemi, position);
+            if (!JudgeToken.isAdditiveOperator(token)) {
                 unreadToken();
                 break;
             }
@@ -792,15 +605,15 @@ public class GrammaAnalyser {
 
     /**
      * <multiplicative-expression> ::=
-     *      <cast-expression>{<multiplicative-operator><cast-expression>}
+     * <cast-expression>{<multiplicative-operator><cast-expression>}
      */
     private MultiplicativeExpressionAST multiplicativeExpression() throws CompileException {
         MultiplicativeExpressionAST multiplicativeExpressionAST = new MultiplicativeExpressionAST();
         multiplicativeExpressionAST.addCastExpressionAST(castExpression());
-        while(true) {
+        while (true) {
             Token token = nextToken();
-            if(token==null) throw new CompileException(ExceptionString.NoSemi, position);
-            if(!JudgeToken.isMultiplicativeOperator(token)) {
+            if (token == null) throw new CompileException(ExceptionString.NoSemi, position);
+            if (!JudgeToken.isMultiplicativeOperator(token)) {
                 unreadToken();
                 break;
             }
@@ -812,24 +625,26 @@ public class GrammaAnalyser {
 
     /**
      * <cast-expression> ::=
-     *     {'('<type-specifier>')'}<unary-expression>
+     * {'('<type-specifier>')'}<unary-expression>
      */
     private CastExpressionAST castExpression() throws CompileException {
         CastExpressionAST castExpressionAST = new CastExpressionAST();
         TokenType typeSpecifier = null;
-        while(true) {
+        while (true) {
             Token token = nextToken();
-            if(token == null) throw new CompileException(ExceptionString.ExpressionIncomplete, position);
-            if(token.getType()!=TokenType.LEFT_PARE) {
+            if (token == null) throw new CompileException(ExceptionString.ExpressionIncomplete, position);
+            if (token.getType() != TokenType.LEFT_PARE) {
                 unreadToken();
                 break;
             }
             token = nextToken();
-            if(token == null || !JudgeToken.isTypeSpecifier(token)) throw new CompileException(ExceptionString.ExpressionIncomplete, position);
-            if(token.getType()== TokenType.VOID) throw new CompileException(ExceptionString.CastToVoid, position);
-            if(typeSpecifier==null) typeSpecifier = token.getType();
+            if (token == null || !JudgeToken.isTypeSpecifier(token))
+                throw new CompileException(ExceptionString.ExpressionIncomplete, position);
+            if (token.getType() == TokenType.VOID) throw new CompileException(ExceptionString.CastToVoid, position);
+            if (typeSpecifier == null) typeSpecifier = token.getType();
             token = nextToken();
-            if(token == null || token.getType()!=TokenType.RIGHT_PARE ) throw new CompileException(ExceptionString.NoRightPare, position);
+            if (token == null || token.getType() != TokenType.RIGHT_PARE)
+                throw new CompileException(ExceptionString.NoRightPare, position);
         }
         castExpressionAST.setTypeSpecifiers(typeSpecifier);
         castExpressionAST.setUnaryExpressionAST(unaryExpression());
@@ -838,34 +653,35 @@ public class GrammaAnalyser {
 
     /**
      * <unary-expression> ::=
-     *     [<unary-operator>]<primary-expression>
+     * [<unary-operator>]<primary-expression>
      */
     private UnaryExpressionAST unaryExpression() throws CompileException {
         UnaryExpressionAST unaryExpressionAST = new UnaryExpressionAST();
         Token token = nextToken();
-        if(token == null) throw new CompileException(ExceptionString.ExpressionIncomplete, position);
-        if(JudgeToken.isUnaryOperator(token)) unaryExpressionAST.setOperator(token.getType());
+        if (token == null) throw new CompileException(ExceptionString.ExpressionIncomplete, position);
+        if (JudgeToken.isUnaryOperator(token)) unaryExpressionAST.setOperator(token.getType());
         else unreadToken();
         // 处理primary expression
         token = nextToken();
-        if(token == null) throw new CompileException(ExceptionString.ExpressionIncomplete, position);
-        if(token.getType() == TokenType.LEFT_PARE){
+        if (token == null) throw new CompileException(ExceptionString.ExpressionIncomplete, position);
+        if (token.getType() == TokenType.LEFT_PARE) {
             unaryExpressionAST.setPrimaryExpression(expression());
             token = nextToken();
-            if(token == null || token.getType()!=TokenType.RIGHT_PARE) throw new CompileException(ExceptionString.NoRightPare, position);
-        } else if(token.getType() == TokenType.IDENTIFIER) {
+            if (token == null || token.getType() != TokenType.RIGHT_PARE)
+                throw new CompileException(ExceptionString.NoRightPare, position);
+        } else if (token.getType() == TokenType.IDENTIFIER) {
             String identifier = token.getStringValue();
             token = nextToken();
-            if(token != null && token.getType()==TokenType.LEFT_PARE){
+            if (token != null && token.getType() == TokenType.LEFT_PARE) {
                 unreadToken();
                 unreadToken();
                 unaryExpressionAST.setPrimaryExpression(functionCallStatement());
             }
             unreadToken();
             unaryExpressionAST.setPrimaryExpression(identifier);
-        } else if(token.getType()==TokenType.INTEGER) unaryExpressionAST.setPrimaryExpression(token.getIntValue());
-        else if(token.getType() == TokenType.DOUBLE) unaryExpressionAST.setPrimaryExpression(token.getDoubleValue());
-        else if(token.getType()== TokenType.CHARACTER) unaryExpressionAST.setPrimaryExpression(token.getCharValue());
+        } else if (token.getType() == TokenType.INTEGER) unaryExpressionAST.setPrimaryExpression(token.getIntValue());
+        else if (token.getType() == TokenType.DOUBLE) unaryExpressionAST.setPrimaryExpression(token.getDoubleValue());
+        else if (token.getType() == TokenType.CHARACTER) unaryExpressionAST.setPrimaryExpression(token.getCharValue());
         else {
             throw new CompileException(ExceptionString.ExpressionIncomplete, position);
         }
@@ -896,12 +712,14 @@ public class GrammaAnalyser {
         tokenIndex--;
     }
 
-    private ConditionAST parseConditionPa() throws CompileException{
+    private ConditionAST parseConditionPa() throws CompileException {
         Token token = nextToken();
-        if(token == null || token.getType()!= TokenType.LEFT_PARE) throw new CompileException(ExceptionString.NoLeftPare, position);
+        if (token == null || token.getType() != TokenType.LEFT_PARE)
+            throw new CompileException(ExceptionString.NoLeftPare, position);
         ConditionAST conditionAST = condition();
         token = nextToken();
-        if(token == null || token.getType()!=TokenType.RIGHT_PARE) throw new CompileException(ExceptionString.NoRightPare, position);
+        if (token == null || token.getType() != TokenType.RIGHT_PARE)
+            throw new CompileException(ExceptionString.NoRightPare, position);
         return conditionAST;
     }
 }
