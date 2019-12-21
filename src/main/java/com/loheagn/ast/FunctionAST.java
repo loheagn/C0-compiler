@@ -49,13 +49,16 @@ public class FunctionAST extends AST {
             Identifier identifier = new Identifier(parameter.getIdentifierType(), parameter.getName());
             if(parameter.isConst()) identifier.setConst(true);
             else identifier.setConst(false);
-            if(identifier.getType()==IdentifierType.DOUBLE) offset += 2;
-            else offset += 1;
+            if(identifier.getType()==IdentifierType.DOUBLE) offset += Stack.doubleOffset;
+            else offset += Stack.intOffset;
             identifier.setOffset(offset);
             Table.addVariable(identifier);
         }
         InstructionBlock instructionBlock = new InstructionBlock();
         instructionBlock.addInstructionBlock(compoundStatementAST.generateInstructions());
+        // 处理栈顶的返回值类型
+        if(functionType!=IdentifierType.VOID)
+            instructionBlock.addInstructionBlock(Blocks.castTopType(instructionBlock.getType(), functionType));
         // 清除变量表
         Table.popLocalVariables();
         Stack.minusLevel(); // 变量层级降低一级

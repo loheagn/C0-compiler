@@ -7,6 +7,10 @@ import com.loheagn.utils.CompileException;
 public class ReturnJumpStatementAST extends JumpStatementAST {
     private ExpressionAST expressionAST;
 
+    public InstructionBlock generateInstructions() throws CompileException {
+        return expressionAST.generateInstructions();
+    }
+
     public ExpressionAST getExpressionAST() {
         return expressionAST;
     }
@@ -15,7 +19,4 @@ public class ReturnJumpStatementAST extends JumpStatementAST {
         this.expressionAST = expressionAST;
     }
 
-    public InstructionBlock generateInstructions() throws CompileException {
-        return null;
-    }
 }
