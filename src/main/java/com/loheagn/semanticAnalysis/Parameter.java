@@ -11,6 +11,8 @@ public class Parameter {
         this.name = name;
     }
 
+    public Parameter () {}
+
     public boolean isConst() {
         return isConst;
     }
