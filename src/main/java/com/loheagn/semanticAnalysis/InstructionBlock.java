@@ -6,7 +6,7 @@ import java.util.List;
 public class InstructionBlock {
     private List<Instruction> instructions;
     private int length;
-    private IdentifierType type;   // 这个指令块执行结束后,栈顶的值的类型
+    private VariableType type;   // 这个指令块执行结束后,栈顶的值的类型
 
     public InstructionBlock(){
         instructions = new ArrayList<Instruction>();
@@ -40,11 +40,11 @@ public class InstructionBlock {
         this.length = length;
     }
 
-    public IdentifierType getType() {
+    public VariableType getType() {
         return type;
     }
 
-    public void setType(IdentifierType type) {
+    public void setType(VariableType type) {
         this.type = type;
     }
 }

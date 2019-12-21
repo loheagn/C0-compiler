@@ -1,7 +1,7 @@
 package com.loheagn.ast.statementAST;
 
 import com.loheagn.semanticAnalysis.Blocks;
-import com.loheagn.semanticAnalysis.Identifier;
+import com.loheagn.semanticAnalysis.Variable;
 import com.loheagn.semanticAnalysis.InstructionBlock;
 import com.loheagn.semanticAnalysis.Table;
 import com.loheagn.utils.CompileException;
@@ -12,11 +12,11 @@ public class ScanStatementAST extends StatementAST {
 
     public InstructionBlock generateInstructions() throws CompileException {
         InstructionBlock instructionBlock = new InstructionBlock();
-        Identifier identifier = Table.getVariable(variable);
-        if(identifier.isConst()) throw new CompileException(ExceptionString.AssignToConst);
-        instructionBlock.addInstructionBlock(Blocks.loadAddress(identifier));
-        instructionBlock.addInstructionBlock(Blocks.scanValue(identifier.getType()));
-        instructionBlock.addInstructionBlock(Blocks.storeVariable(identifier.getType()));
+        Variable variable = Table.getVariable(this.variable);
+        if(variable.isConst()) throw new CompileException(ExceptionString.AssignToConst);
+        instructionBlock.addInstructionBlock(Blocks.loadAddress(variable));
+        instructionBlock.addInstructionBlock(Blocks.scanValue(variable.getType()));
+        instructionBlock.addInstructionBlock(Blocks.storeVariable(variable.getType()));
         return instructionBlock;
     }
 

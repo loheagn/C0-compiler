@@ -3,7 +3,7 @@ package com.loheagn.ast.statementAST;
 import com.loheagn.ast.expressionAST.ExpressionAST;
 import com.loheagn.ast.loopAST.ForUpdateExpressionAST;
 import com.loheagn.semanticAnalysis.Blocks;
-import com.loheagn.semanticAnalysis.Identifier;
+import com.loheagn.semanticAnalysis.Variable;
 import com.loheagn.semanticAnalysis.InstructionBlock;
 import com.loheagn.semanticAnalysis.Table;
 import com.loheagn.utils.CompileException;
@@ -14,7 +14,7 @@ public class AssignStatementAST extends ForUpdateExpressionAST {
     private ExpressionAST expressionAST;
 
     public InstructionBlock generateInstructions() throws CompileException {
-        Identifier variable = Table.getVariable(identifier);
+        Variable variable = Table.getVariable(identifier);
         if(variable.isConst()) throw new CompileException(ExceptionString.AssignToConst);
         InstructionBlock instructionBlock = Blocks.loadAddress(variable);
         instructionBlock.addInstructionBlock(expressionAST.generateInstructions());

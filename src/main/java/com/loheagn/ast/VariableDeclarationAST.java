@@ -12,14 +12,14 @@ public class VariableDeclarationAST extends AST {
 
     private boolean isConst = false;
 
-    private IdentifierType type;
+    private VariableType type;
 
     private String identifier;
 
     private ExpressionAST expressionAST;
 
     public InstructionBlock generateInstructions() throws CompileException {
-        if(this.type == IdentifierType.VOID) throw new CompileException(ExceptionString.VoidVariable);
+        if(this.type == VariableType.VOID) throw new CompileException(ExceptionString.VoidVariable);
         if(isConst && expressionAST == null) throw new CompileException(ExceptionString.ConstVariableNeedValue);
         InstructionBlock instructionBlock = new InstructionBlock();
         // 计算表达式的值,最终给的结果肯定是放在栈顶上
@@ -32,9 +32,9 @@ public class VariableDeclarationAST extends AST {
         InstructionBlock castInstructionBlock = Blocks.castTopType(expressionInstructionBlock.getType(), this.type);
         // 填变量表
         int offset = Stack.getOffset();
-        if(this.type == IdentifierType.DOUBLE) offset -= Stack.doubleOffset;
+        if(this.type == VariableType.DOUBLE) offset -= Stack.doubleOffset;
         else offset -= Stack.intOffset;
-        Table.addVariable(new Identifier(this.type, this.identifier, offset));
+        Table.addVariable(new Variable(this.type, this.identifier, offset));
         // 填充当前的指令块
         instructionBlock.addInstructionBlock(expressionInstructionBlock);
         instructionBlock.addInstructionBlock(castInstructionBlock);
@@ -57,11 +57,11 @@ public class VariableDeclarationAST extends AST {
         isConst = aConst;
     }
 
-    public IdentifierType getType() {
+    public VariableType getType() {
         return type;
     }
 
-    public void setType(IdentifierType type) {
+    public void setType(VariableType type) {
         this.type = type;
     }
 

@@ -5,34 +5,48 @@ import com.loheagn.utils.ExceptionString;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+class Identifier {
+    String name;
+    int level;
+    Object what;
+    Identifier(String name, int level, Object what) {
+        this.name = name;
+        this.level = level;
+        this.what  = what;
+    }
+}
 
 public class Table {
 
-    private static List<Identifier> variableTable = new ArrayList<Identifier>();
+//    private static List<Identifier> variableTable = new ArrayList<Identifier>();
     private static List<Function> functionTable = new ArrayList<Function>();
     private static List<ConstIdentifier> constTable = new ArrayList<ConstIdentifier>();
 
+    private static List<Identifier> identifierTable = new ArrayList<Identifier>();
+
     /**
-     * 向变量表中插入一个变量
-     * @param identifier    要插入的变量
-     * @return  如果变量表中没有重复的,也就是说之前没有定义过 则说明插入是成功的,否则返回假
+     * 向标识符表中插入一个变量
+     * @param variable    要插入的变量
      */
-    public static void addVariable(Identifier identifier) throws CompileException {
-        for(int i=variableTable.size()-1;i>=0;i--) {
-            if(variableTable.get(i).getLevel() != identifier.getLevel()) break;
-            else if(variableTable.get(i).getName().equals(identifier.getName())) throw new CompileException(ExceptionString.IdentifierDuplicateDefinition);
+    public static void addVariable(Variable variable) throws CompileException {
+        for(int i = identifierTable.size()-1; i>=0; i--) {
+            if(identifierTable.get(i).level == variable.getLevel() && variable.getName().equals(identifierTable.get(i).name)) throw new CompileException(ExceptionString.IdentifierDuplicateDefinition);
         }
-        identifier.setOffset(Stack.getOffset());
-        identifier.setLevel(Stack.getLevel());
-        variableTable.add(identifier);
+        identifierTable.add(new Identifier(variable.getName(), variable.getLevel(), variable));
     }
 
     /**
-     * 获取一个变量的地址,也就是该变量相对于当前栈帧BP指针的偏移
+     * 获取一个变量
      */
-    public static Identifier getVariable (String name) throws CompileException {
-        for(int i = variableTable.size()-1;i>=0;i--){
-            if(variableTable.get(i).getName().equals(name)) return variableTable.get(i);
+    public static Variable getVariable (String name) throws CompileException {
+        for(int i = identifierTable.size()-1; i>=0; i--) {
+            if(name.equals(identifierTable.get(i).name)){
+                if(identifierTable.get(i).what instanceof Variable)
+                    return (Variable) identifierTable.get(i).what;
+                else throw new CompileException(ExceptionString.IdentifierNotDefined);
+            }
         }
         throw new CompileException(ExceptionString.IdentifierNotDefined);
     }
@@ -41,11 +55,9 @@ public class Table {
      * 弹出当前变量表中所有最高层级的变量,用于退出一个大括号结构的时候使用
      */
     public static void popLocalVariables() {
-        if(variableTable.size()<=0) return;
-        int level = Stack.getLevel();
-        for(int i = variableTable.size()-1;i>=0;i--) {
-            if(variableTable.get(i).getLevel() == level) variableTable.remove(i);
-        }
+        if(identifierTable.size()<=0) return;
+        final int level = Stack.getLevel();
+        identifierTable = identifierTable.stream().filter(identifier -> identifier.level==level).collect(Collectors.toList());
     }
 
     public static int addConst(ConstIdentifier constIdentifier) {
@@ -61,23 +73,41 @@ public class Table {
     }
 
     public static void addFunction(Function function)throws CompileException {
-        for(Identifier identifier : variableTable){
-            if(function.getName().getName().equals(identifier.getName())) throw new CompileException(ExceptionString.IdentifierDuplicateDefinition);
+        for(int i = identifierTable.size()-1; i>=0; i--) {
+            if(identifierTable.get(i).level == 0 && function.getName().getName().equals(identifierTable.get(i).name)) throw new CompileException(ExceptionString.IdentifierDuplicateDefinition);
         }
-        for(Function function1:functionTable) {
-            if(function.getName().getName().equals(function1.getName().getName())) throw new  CompileException(ExceptionString.IdentifierDuplicateDefinition);
-        }
-        functionTable.add(function);
+        identifierTable.add(new Identifier(function.getName().getName(), 0, function));
     }
 
     public static Function getFunction(String name) throws CompileException {
-        for(Function function:functionTable) {
-            if(function.getName().getName().equals(name)) return function;
+        for(int i = identifierTable.size()-1;i>=0;i--) {
+            if(identifierTable.get(i).name.equals(name)) {
+                if(identifierTable.get(i).what instanceof  Function) return (Function)identifierTable.get(i).what;
+                else throw new CompileException(ExceptionString.FunctionNotFound);
+            }
         }
         throw new CompileException(ExceptionString.FunctionNotFound);
     }
 
-    public static int getFunctionIndex(String name) {
-        return getConstIndex(name);
+    public static int getFunctionIndex(String name) throws CompileException {
+        return functionTable.indexOf(getFunction(name));
+    }
+
+    public static List<String> generateConstTable(){
+        List<String> result = new ArrayList<String>();
+        result.add(".constants:");
+        for(ConstIdentifier constIdentifier:constTable) {
+            result.add(constTable.indexOf(constIdentifier)+" " + constIdentifier.toString());
+        }
+        return result;
+    }
+
+    public static List<String> generateFunctionTable () {
+        List<String> result = new ArrayList<String>();
+        result.add(".functions");
+        for(Function function : functionTable) {
+            result.add("" + functionTable.indexOf(function) + " " + getConstIndex(function.getName().getName()) + " " + function.toString());
+        }
+        return result;
     }
 }

@@ -26,4 +26,15 @@ public class ConstIdentifier {
     public void setType(TokenType type) {
         this.type = type;
     }
+
+    @Override
+    public String toString() {
+        if(type== TokenType.STRING) {
+            return "S " + "\""+ value.toString() +"\"";
+        } else if(type == TokenType.DOUBLE) {
+            return "D " + "\"0x"+ Long.toHexString(Double.doubleToLongBits((Double) value))  +"\"";
+        } else {
+            return "I " + "\"0x"+ Long.toHexString((Integer) value)  +"\"";
+        }
+    }
 }

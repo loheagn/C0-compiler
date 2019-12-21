@@ -17,7 +17,10 @@ public class CompoundStatementAST extends StatementAST {
     public InstructionBlock generateInstructions() throws CompileException {
         InstructionBlock instructionBlock = new InstructionBlock();
         // new level
-        Stack.newLevel();
+        if(Stack.isFunctionCompoundStatement) {
+            Stack.newLevel();
+            Stack.isFunctionCompoundStatement = false;
+        }
         for(VariableDeclarationAST variableDeclarationAST: variableDeclarationASTList) {
             instructionBlock.addInstructionBlock(variableDeclarationAST.generateInstructions());
         }

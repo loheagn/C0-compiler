@@ -9,7 +9,7 @@ import com.loheagn.ast.jumpAST.JumpStatementAST;
 import com.loheagn.ast.jumpAST.ReturnJumpStatementAST;
 import com.loheagn.ast.loopAST.*;
 import com.loheagn.ast.statementAST.*;
-import com.loheagn.semanticAnalysis.IdentifierType;
+import com.loheagn.semanticAnalysis.VariableType;
 import com.loheagn.semanticAnalysis.Parameter;
 import com.loheagn.semanticAnalysis.RelationOperatorType;
 import com.loheagn.tokenizer.Token;
@@ -83,7 +83,7 @@ public class GrammaAnalyser {
     private List<VariableDeclarationAST> variableDeclaration() throws CompileException {
         List<VariableDeclarationAST> variableDeclarationASTList = new ArrayList<VariableDeclarationAST>();
         boolean isConst = false;
-        IdentifierType identifierType;
+        VariableType variableType;
         Token token = nextToken();
         if (token == null) {
             return variableDeclarationASTList;
@@ -94,14 +94,14 @@ public class GrammaAnalyser {
         }
         if (!JudgeToken.isTypeSpecifier(token))
             throw new CompileException(ExceptionString.VariableDeclaration, position);
-        identifierType = IdentifierType.getVariableType(token.getStringValue());
-        variableDeclarationASTList.add(variableDeclarationAST(isConst, identifierType));
+        variableType = VariableType.getVariableType(token.getStringValue());
+        variableDeclarationASTList.add(variableDeclarationAST(isConst, variableType));
         while (true) {
             token = nextToken();
             if (token == null) throw new CompileException(ExceptionString.NoSemi, position);
             else if (token.getType() == TokenType.SEMI) return variableDeclarationASTList;
             else if (token.getType() == TokenType.COMMA)
-                variableDeclarationASTList.add(variableDeclarationAST(isConst, identifierType));
+                variableDeclarationASTList.add(variableDeclarationAST(isConst, variableType));
             else throw new CompileException(ExceptionString.NoSemi, position);
         }
     }
@@ -112,7 +112,7 @@ public class GrammaAnalyser {
      * <initializer> ::=
      *     '='<expression>
      */
-    private VariableDeclarationAST variableDeclarationAST(boolean isConst, IdentifierType type) throws CompileException {
+    private VariableDeclarationAST variableDeclarationAST(boolean isConst, VariableType type) throws CompileException {
         VariableDeclarationAST variableDeclarationAST = new VariableDeclarationAST();
         if(isConst)
             variableDeclarationAST.setConst();
@@ -142,7 +142,7 @@ public class GrammaAnalyser {
         if (token == null) {
             return null;
         }
-        functionAST.setFunctionType(IdentifierType.getVariableType(token.getStringValue()));
+        functionAST.setFunctionType(VariableType.getVariableType(token.getStringValue()));
         token = nextToken();
         if (token == null || token.getType() != TokenType.IDENTIFIER) {
             throw new CompileException(ExceptionString.FunctionIncomplete, position);
@@ -189,7 +189,7 @@ public class GrammaAnalyser {
                     if (token == null || !JudgeToken.isTypeSpecifier(token))
                         throw new CompileException(ExceptionString.FunctionIncomplete, position);
                 } else {
-                    parameter.setIdentifierType(IdentifierType.getVariableType(token.getStringValue()));
+                    parameter.setVariableType(VariableType.getVariableType(token.getStringValue()));
                     token = nextToken();
                     if (token == null || token.getType() != TokenType.IDENTIFIER)
                         throw new CompileException(ExceptionString.FunctionIncomplete, position);

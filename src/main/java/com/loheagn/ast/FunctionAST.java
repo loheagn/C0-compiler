@@ -10,7 +10,7 @@ import java.util.List;
 
 public class FunctionAST extends AST {
 
-    private IdentifierType functionType;
+    private VariableType functionType;
     private String name;
     private List<Parameter> parameters = new ArrayList<Parameter>();
     private CompoundStatementAST compoundStatementAST;
@@ -19,8 +19,8 @@ public class FunctionAST extends AST {
         this.parameters = parameters;
     }
 
-    public void setFunctionType(IdentifierType identifierType) {
-        this.functionType = identifierType;
+    public void setFunctionType(VariableType variableType) {
+        this.functionType = variableType;
     }
 
     public void setName(String name) {
@@ -32,36 +32,45 @@ public class FunctionAST extends AST {
     }
 
     public InstructionBlock generateInstructions() throws CompileException {
+        // 设置当期函数的返回类型
+        CodeStack.functionType = functionType;
         // 代码段清空
         CodeStack.offset = 0;
         // 填函数表
         Function function = new Function();
-        function.setName(new Identifier(functionType, name));
+        function.setName(new Parameter(functionType, name));
         for(Parameter parameter : parameters){
-            function.addParameter(new Identifier(parameter.getIdentifierType(), parameter.getName()));
+            function.addParameter(new Parameter(parameter.getVariableType(), parameter.getName()));
         }
         Table.addFunction(function);
         // 填常量表
         Table.addConst(new ConstIdentifier(name, TokenType.STRING));
         // 填变量表
+        // 新的变量level层级
+        Stack.newLevel();
         int offset = 0; // 参数相对于BP指针的偏移
         for(Parameter parameter:parameters){
-            Identifier identifier = new Identifier(parameter.getIdentifierType(), parameter.getName());
-            if(parameter.isConst()) identifier.setConst(true);
-            else identifier.setConst(false);
-            if(identifier.getType()==IdentifierType.DOUBLE) offset += Stack.doubleOffset;
+            if(parameter.getVariableType()== VariableType.DOUBLE) offset += Stack.doubleOffset;
             else offset += Stack.intOffset;
-            identifier.setOffset(offset);
-            Table.addVariable(identifier);
+            Stack.push(parameter.getVariableType());
+            Variable variable = new Variable(parameter.getVariableType(), parameter.getName(),offset,1);
+            if(parameter.isConst()) variable.setConst(true);
+            else variable.setConst(false);
+            Table.addVariable(variable);
         }
         InstructionBlock instructionBlock = new InstructionBlock();
         instructionBlock.addInstructionBlock(compoundStatementAST.generateInstructions());
-        // 处理栈顶的返回值类型
-        if(functionType!=IdentifierType.VOID)
-            instructionBlock.addInstructionBlock(Blocks.castTopType(instructionBlock.getType(), functionType));
-        // 清除变量表
-        Table.popLocalVariables();
-        Stack.minusLevel(); // 变量层级降低一级
+        instructionBlock.addInstruction(new Instruction(OperationType.ret,0,0));
         return instructionBlock;
+    }
+
+    public List<String> instructionsToStringList() {
+        List<String> result = new ArrayList<String>();
+        result.add(name + ":");
+        List<Instruction> instructionList = this.generateInstructions().getInstructions();
+        for(int i = 0;i<instructionList.size();i++) {
+            result.add("" + i + " " + instructionList.get(i).toString());
+        }
+        return result;
     }
 }

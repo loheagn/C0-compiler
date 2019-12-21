@@ -11,6 +11,8 @@ public class Stack {
 
     public final static int intOffset = 1;
 
+    public static boolean isFunctionCompoundStatement = false;
+
     private static int BP = 0;
     private static int SP = 0;
 
@@ -58,9 +60,9 @@ public class Stack {
         SP -= offset;
     }
 
-    public static void push(IdentifierType type) {
-        if(type == IdentifierType.VOID) push(0);
-        else if(type == IdentifierType.DOUBLE) push(doubleOffset);
+    public static void push(VariableType type) {
+        if(type == VariableType.VOID) push(0);
+        else if(type == VariableType.DOUBLE) push(doubleOffset);
         else push(intOffset);
     }
 

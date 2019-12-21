@@ -1,30 +1,26 @@
 package com.loheagn.semanticAnalysis;
 
-public class Identifier {
+public class Variable {
 
-    private IdentifierType type;
+    private VariableType type;
     private int offset; // 标识符在栈上的位置与当前层级BP指针的偏移
     private String name;
     private int level;  // 标识符处于的层级
     private Number value;   // 该标识符当前的值
     private boolean isConst;
 
-    public Identifier(IdentifierType type, String name) {
-        this.type = type;
-        this.name = name;
-    }
-
-    public Identifier(IdentifierType type, String name, int offset){
+    public Variable(VariableType type, String name, int offset, int level){
         this.type = type;
         this.name = name;
         this.offset = offset;
+        this.level = level;
     }
 
-    public IdentifierType getType() {
+    public VariableType getType() {
         return type;
     }
 
-    public void setType(IdentifierType type) {
+    public void setType(VariableType type) {
         this.type = type;
     }
 
@@ -75,8 +71,8 @@ public class Identifier {
 
     @Override
     public boolean equals(Object obj) {
-        if(!(obj instanceof Identifier)) return false;
-        Identifier identifier = (Identifier) obj;
-        return identifier.getName().equals(name);
+        if(!(obj instanceof Variable)) return false;
+        Variable variable = (Variable) obj;
+        return variable.getName().equals(name);
     }
 }

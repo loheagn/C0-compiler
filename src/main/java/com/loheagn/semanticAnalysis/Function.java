@@ -4,28 +4,36 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Function {
-    private Identifier name;
-    private List<Identifier> parameters = new ArrayList<Identifier>();
+    private Parameter name;
+    private List<Parameter> parameters = new ArrayList<Parameter>();
 
-    public void addParameter(Identifier parameter){
-        parameter.setLevel(1);
-        parameter.setOffset(parameters.size());
+    public void addParameter(Parameter parameter){
         this.parameters.add(parameter);
     }
 
-    public Identifier getName() {
+    public Parameter getName() {
         return name;
     }
 
-    public void setName(Identifier name) {
+    public void setName(Parameter name) {
         this.name = name;
     }
 
-    public List<Identifier> getParameters() {
+    public List<Parameter> getParameters() {
         return parameters;
     }
 
-    public void setParameters(List<Identifier> parameters) {
+    public void setParameters(List<Parameter> parameters) {
         this.parameters = parameters;
+    }
+
+    @Override
+    public String toString() {
+        int parameters_count = 0;
+        for(Parameter parameter : parameters) {
+            if(parameter.getVariableType() == VariableType.DOUBLE) parameters_count += Stack.doubleOffset;
+            else parameters_count += Stack.intOffset;
+        }
+        return parameters_count + " 1";
     }
 }
