@@ -103,12 +103,15 @@ public class Table {
         return result;
     }
 
-    public static List<String> generateFunctionTable () {
+    public static List<String> generateFunctionTable () throws CompileException {
+        boolean hasMain = false;
         List<String> result = new ArrayList<String>();
         result.add(".functions:");
         for(Function function : functionTable) {
             result.add("" + functionTable.indexOf(function) + " " + getConstIndex(function.getName().getName()) + " " + function.toString());
+            if(function.getName().getName().equals("main")) hasMain = true;
         }
+        if(!hasMain) throw new CompileException(ExceptionString.NoMain);
         return result;
     }
 }
