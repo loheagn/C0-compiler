@@ -18,14 +18,16 @@ public class WhileLoopStatementAST extends LoopStatementAST {
         InstructionBlock statement = null;
         if(conditionAST!=null) {
             condition = conditionAST.generateInstructions();
+            Stack.pop(Stack.intOffset);
         }
         if(statementAST!=null) {
+            CodeStack.offset ++;
             statement = statementAST.generateInstructions();
+            CodeStack.offset --;
         }
         InstructionBlock instructionBlock = new InstructionBlock();
         if(condition!=null) {
             instructionBlock.addInstructionBlock(condition);
-            Stack.pop(instructionBlock.getType());
             instructionBlock.addInstructionBlock(Blocks.jumpNot(conditionAST.getRelationOperator(), CodeStack.offset + 2, instructionBlock.getType()));     // 这里加2是因为还有两条跳转指令没有生成
         } else {
             instructionBlock.addInstructionBlock(Blocks.nop());

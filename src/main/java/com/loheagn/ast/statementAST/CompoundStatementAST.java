@@ -1,6 +1,7 @@
 package com.loheagn.ast.statementAST;
 
 import com.loheagn.ast.VariableDeclarationAST;
+import com.loheagn.semanticAnalysis.Blocks;
 import com.loheagn.semanticAnalysis.InstructionBlock;
 import com.loheagn.semanticAnalysis.Stack;
 import com.loheagn.semanticAnalysis.Table;
@@ -31,6 +32,10 @@ public class CompoundStatementAST extends StatementAST {
         }
         // 清空本级作用域的变量表
         Table.popLocalVariables();
+        // 释放栈上的内存
+        for(VariableDeclarationAST variableDeclarationAST:variableDeclarationASTList){
+            instructionBlock.addInstructionBlock(Blocks.free(variableDeclarationAST.getType()));
+        }
         Stack.minusLevel();
         return instructionBlock;
     }

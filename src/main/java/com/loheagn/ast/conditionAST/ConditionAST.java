@@ -5,7 +5,7 @@ import com.loheagn.ast.expressionAST.ExpressionAST;
 import com.loheagn.semanticAnalysis.Blocks;
 import com.loheagn.semanticAnalysis.InstructionBlock;
 import com.loheagn.semanticAnalysis.RelationOperatorType;
-import com.loheagn.tokenizer.TokenType;
+import com.loheagn.semanticAnalysis.VariableType;
 import com.loheagn.utils.CompileException;
 
 public class ConditionAST extends AST {
@@ -16,9 +16,23 @@ public class ConditionAST extends AST {
     public InstructionBlock generateInstructions() throws CompileException {
         InstructionBlock instructionBlock = new InstructionBlock();
         InstructionBlock expression1 = expressionAST1.generateInstructions();
-        InstructionBlock expression2 = expressionAST2.generateInstructions();
         instructionBlock.addInstructionBlock(expression1);
-        instructionBlock.addInstructionBlock(Blocks.computeTwoExpressions(expression1, expression2, TokenType.MINUS));
+        InstructionBlock expression2 = null;
+        if(expressionAST2!=null){
+            expression2 = expressionAST2.generateInstructions();
+        } else {
+            expression2 = Blocks.pushZero();
+            relationOperator = RelationOperatorType.NOT_EQUAL;
+        }
+        // 首先选出类型转换的目标类型
+        VariableType dstType = VariableType.getBiggerType(expression1.getType(), expression2.getType());
+        // 把第一个表达式的结果进行类型转换
+        instructionBlock.addInstructionBlock(Blocks.castTopType(expression1.getType(), dstType));
+        // 第二个表达式
+        instructionBlock.addInstructionBlock(expression2);
+        instructionBlock.addInstructionBlock(Blocks.castTopType(expression2.getType(), dstType));
+        instructionBlock.addInstructionBlock(Blocks.cmp(instructionBlock.getType()));
+        instructionBlock.addInstructionBlock(Blocks.castTopType(instructionBlock.getType(), VariableType.INT));
         return instructionBlock;
     }
 

@@ -63,7 +63,7 @@ public class FunctionAST extends AST {
         }
         InstructionBlock instructionBlock = new InstructionBlock();
         instructionBlock.addInstructionBlock(compoundStatementAST.generateInstructions());
-        instructionBlock.addInstruction(new Instruction(OperationType.ret,null,null));
+        instructionBlock.addInstructionBlock(Blocks.returnBlockZero(function.getName().getVariableType()));
         return instructionBlock;
     }
 

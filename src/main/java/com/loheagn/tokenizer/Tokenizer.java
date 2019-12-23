@@ -486,6 +486,7 @@ public class Tokenizer {
                     case '+':
                     case '-':
                         builder.append(currentChar);
+                        currentChar = nextChar();
                     default: {
                         if (JudgeChar.isDigit(currentChar)) {
                             builder.append(currentChar);

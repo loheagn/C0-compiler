@@ -22,6 +22,13 @@ public class VariableDeclarationAST extends AST {
         if(this.type == VariableType.VOID) throw new CompileException(ExceptionString.VoidVariable);
         if(isConst && expressionAST == null) throw new CompileException(ExceptionString.ConstVariableNeedValue);
         InstructionBlock instructionBlock = new InstructionBlock();
+        // 填变量表
+        int offset = Stack.getOffset();
+        Table.addVariable(new Variable(this.type, this.identifier, offset, Stack.getLevel()));
+        // 在栈上分配空间
+        instructionBlock.addInstructionBlock(Blocks.mallocOnStack(this.type));
+        // 把该变量的地址加载到栈上
+        instructionBlock.addInstructionBlock(Blocks.loadAddress(identifier));
         // 计算表达式的值,最终给的结果肯定是放在栈顶上
         InstructionBlock expressionInstructionBlock;
         if(expressionAST!=null)
@@ -30,14 +37,10 @@ public class VariableDeclarationAST extends AST {
             expressionInstructionBlock = Blocks.pushZero();
         }
         InstructionBlock castInstructionBlock = Blocks.castTopType(expressionInstructionBlock.getType(), this.type);
-        // 填变量表
-        int offset = Stack.getOffset();
-        if(this.type == VariableType.DOUBLE) offset -= Stack.doubleOffset;
-        else offset -= Stack.intOffset;
-        Table.addVariable(new Variable(this.type, this.identifier, offset, Stack.getLevel()));
         // 填充当前的指令块
         instructionBlock.addInstructionBlock(expressionInstructionBlock);
         instructionBlock.addInstructionBlock(castInstructionBlock);
+        instructionBlock.addInstructionBlock(Blocks.storeVariable(this.type));
         return instructionBlock;
     }
 

@@ -15,14 +15,16 @@ public class IfConditionStatementAST extends ConditionStatementAST {
     public InstructionBlock generateInstructions() throws CompileException {
         InstructionBlock instructionBlock = new InstructionBlock();
         instructionBlock.addInstructionBlock(conditionAST.generateInstructions());
-        if(ifStatementAST!=null) {
-            Stack.pop(instructionBlock.getType());
-            InstructionBlock ifStatementBlock =  ifStatementAST.generateInstructions();
-            instructionBlock.addInstructionBlock(Blocks.jumpNot(conditionAST.getRelationOperator(), CodeStack.offset + 2, instructionBlock.getType()));
-            instructionBlock.addInstructionBlock(ifStatementBlock);
-        }
-        if(elseStatementAST!=null) {
+        Stack.pop(instructionBlock.getType());
+        CodeStack.offset ++;
+        InstructionBlock ifStatementBlock = ifStatementAST.generateInstructions();
+        CodeStack.offset --;
+        instructionBlock.addInstructionBlock(Blocks.jumpNot(conditionAST.getRelationOperator(), CodeStack.offset + 2, instructionBlock.getType()));
+        instructionBlock.addInstructionBlock(ifStatementBlock);
+        if (elseStatementAST != null) {
+            CodeStack.offset++;
             InstructionBlock elseBlock = elseStatementAST.generateInstructions();
+            CodeStack.offset --;
             instructionBlock.addInstructionBlock(Blocks.jump(CodeStack.offset + 1));
             instructionBlock.addInstructionBlock(elseBlock);
         } else {

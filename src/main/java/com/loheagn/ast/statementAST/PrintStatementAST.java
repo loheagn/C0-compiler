@@ -13,7 +13,8 @@ public class PrintStatementAST extends StatementAST {
 
     public InstructionBlock generateInstructions() throws CompileException {
         InstructionBlock instructionBlock = new InstructionBlock();
-        for(Object object:printList){
+        for(int i = 0;i<printList.size();i++){
+            Object object = printList.get(i);
             if(object instanceof ExpressionAST) {
                 instructionBlock.addInstructionBlock(((ExpressionAST) object).generateInstructions());
                 instructionBlock.addInstructionBlock(Blocks.printValue(instructionBlock.getType()));
@@ -22,7 +23,9 @@ public class PrintStatementAST extends StatementAST {
                 Stack.push(Stack.intOffset);
                 instructionBlock.addInstructionBlock(Blocks.printString());
             }
+            if(i!=printList.size()-1) instructionBlock.addInstructionBlock(Blocks.printSpace());
         }
+        instructionBlock.addInstructionBlock(Blocks.printLine());
         return instructionBlock;
     }
 

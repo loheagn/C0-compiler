@@ -74,4 +74,8 @@ public class Stack {
     public static int getLevel() {
         return level;
     }
+
+    public static void setOffset(int preSP) {
+        SP = preSP;
+    }
 }
