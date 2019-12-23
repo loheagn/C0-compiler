@@ -25,7 +25,7 @@ public class CompileException extends RuntimeException {
 
     @Override
     public String toString() {
-        return "Row\t" + position.row + ", column\t" + position.column + ": " + message.getMessage();
+        return "ERROR: Row\t" + position.row + ", column\t" + position.column + ": " + message.getMessage();
     }
 
 }

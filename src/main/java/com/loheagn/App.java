@@ -3,6 +3,7 @@ package com.loheagn;
 import com.loheagn.ast.C0ProgramAST;
 import com.loheagn.grammaAnalysis.GrammaAnalyser;
 import com.loheagn.tokenizer.Tokenizer;
+import com.loheagn.utils.CompileException;
 import org.apache.commons.cli.*;
 
 import java.io.BufferedWriter;
@@ -64,10 +65,23 @@ public class App {
             } else if(commandLine.hasOption("o")) {
                 // todo
             }
-//        } catch (CompileException e){
-//            System.out.println(e.toString());
+        } catch (CompileException e){
+            System.out.println(e.toString());
+            System.exit(1);
         } catch (IOException e) {
             System.out.println("文件操作错误.");
+            System.exit(1);
+//        } catch (Exception e) {
+//            System.out.println("Usage:\n" +
+//                    "  cc0 [options] input [-o file]\n" +
+//                    "or \n" +
+//                    "  cc0 [-h]\n" +
+//                    "Options:\n" +
+//                    "  -s        将输入的 c0 源代码翻译为文本汇编文件\n" +
+//                    "  -c        将输入的 c0 源代码翻译为二进制目标文件\n" +
+//                    "  -h        显示关于编译器使用的帮助\n" +
+//                    "  -o file   输出到指定的文件 file");
+//            System.exit(1);
         }
     }
 }

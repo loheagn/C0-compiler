@@ -6,7 +6,7 @@ public enum TokenType {
     FOR("for"), DO("do"), RETURN("return"), BREAK("break"), CONTINUE("continue"), PRINT("print"), SCAN("scan"),
     INTEGER("0"), MULTI("*"), PLUS("+"), DIV("/"), MINUS("-"), ASSGN("="), EQUAL("=="), GREATER(">"), GE(">="),
     LESS("<"), LE("<="), NEQ("!="), SEMI(";"), COMMA(","), LEFT_BRACE("{"), RIGHT_BRACE("}"), LEFT_PARE("("),
-    RIGHT_PARE(")"), COLON(":"), STRING("~~"), CHARACTER("`"), FLOAT("0.0");
+    RIGHT_PARE(")"), COLON(":"), STRING("~~"), CHARACTER("`"), FLOAT("0.0"), COMMENT("//");
 
     private String value;
 

@@ -12,14 +12,11 @@ public class Token {
     private Position startPosition;
     private Position endPosition;
 
-    public Token(TokenType type, Object value, Position startPosition, Position endPosition) {
+    Token(TokenType type, Object value, Position startPosition, Position endPosition) {
         this.type = type;
         this.value = value;
         this.startPosition = startPosition;
         this.endPosition = endPosition;
-    }
-
-    public Token() {
     }
 
     public String getStringValue(){

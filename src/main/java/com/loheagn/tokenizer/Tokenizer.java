@@ -9,6 +9,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SimpleTimeZone;
 
 /**
  * Tokenizer
@@ -37,6 +38,7 @@ public class Tokenizer {
     }
 
     private Character nextChar() {
+        if(content.size()==0) return null;
         currentPosition.column++;
         if (currentPosition.column > content.get(currentPosition.row).length() - 1) {
             currentPosition.column = 0;
@@ -258,7 +260,7 @@ public class Tokenizer {
                     state = DFAState.COMMENT_SINGLE_STATE;
                     builder.append('/');
                 } else if (currentChar == '*') {
-                    state = DFAState.MULTI_STATE;
+                    state = DFAState.COM_MULTI_STATE;
                     builder.append('*');
                 } else {
                     unreadChar();
@@ -506,7 +508,7 @@ public class Tokenizer {
             }
             case COMMENT_SINGLE_STATE: {
                 if (currentChar == null || currentChar == '\n' || currentChar == '\r')
-                    return null;
+                    return new Token(TokenType.COMMENT, builder.toString(), position,currentPosition);
                 else {
                     state = DFAState.COMMENT_SINGLE_STATE;
                 }
@@ -526,7 +528,7 @@ public class Tokenizer {
                 if (currentChar == null) {
                     throw new CompileException(ExceptionString.IllegalComment, currentPosition);
                 } else if (currentChar == '/') {
-                    return null;
+                    return new Token(TokenType.COMMENT, builder.toString(), position,currentPosition);
                 } else {
                     state = DFAState.COM_MULTI_STATE;
                 }
@@ -565,7 +567,8 @@ public class Tokenizer {
         List<Token> tokens = new ArrayList<Token>();
         Token token = nextToken();
         while (token != null) {
-            tokens.add(token);
+            if(token.getType()!=null && token.getType()!=TokenType.COMMENT)
+                tokens.add(token);
             token = nextToken();
         }
         return tokens;
