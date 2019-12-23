@@ -24,7 +24,7 @@ public class C0ProgramAST{
         this.functionASTList.add(functionAST);
     }
 
-    public List<String> generateInstructions() throws CompileException {
+    public List<String> generateInstructionsString() throws CompileException {
         // 然后是start指令
         List<String> startInstructions = new ArrayList<>();
         startInstructions.add(".start:");
@@ -50,5 +50,9 @@ public class C0ProgramAST{
         instructions.addAll(functionTableList);
         instructions.addAll(functionInstructions);
         return instructions;
+    }
+
+    public List<Byte[]> generateInstructionsBytes() throws CompileException {
+    return null;
     }
 }

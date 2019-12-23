@@ -21,7 +21,7 @@ public class App {
     private static List<String> compile()  {
         GrammaAnalyser grammaAnalyser = new GrammaAnalyser(new Tokenizer().getAllTokens(inFileName));
         C0ProgramAST c0ProgramAST = grammaAnalyser.C0Program();
-        return c0ProgramAST.generateInstructions();
+        return c0ProgramAST.generateInstructionsString();
     }
 
     public static void main(String[] args){
