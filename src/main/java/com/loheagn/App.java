@@ -4,7 +4,6 @@ import com.loheagn.ast.C0ProgramAST;
 import com.loheagn.grammaAnalysis.GrammaAnalyser;
 import com.loheagn.tokenizer.Tokenizer;
 import com.loheagn.utils.CompileException;
-import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 import org.apache.commons.cli.*;
 
 import java.io.*;
@@ -84,7 +83,6 @@ public class App {
             System.out.println("文件操作错误.");
             System.exit(1);
         } catch (Exception e) {
-            e.printStackTrace();
             System.out.println(helpString);
             System.exit(1);
         }
