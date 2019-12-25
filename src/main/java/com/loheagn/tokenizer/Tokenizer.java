@@ -87,6 +87,29 @@ public class Tokenizer {
         return new Token(TokenType.INTEGER, value, position, currentPosition);
     }
 
+    private Token dealWithString(StringBuilder builder, Position position, Position currentPosition) {
+        String initString = builder.toString();
+        StringBuilder stringBuilder = new StringBuilder();
+        for(int i =0 ;i<initString.length();i++){
+            if(initString.charAt(i) == '\\'){
+                char ch = 0;
+                switch (initString.charAt(i+1)) {
+                    case '\\': ch = '\\'; i++; break;
+                    case 'n': ch = '\n'; i++;break;
+                    case '\'': ch = '\'';i++; break;
+                    case '"': ch = '"';i++; break;
+                    case 'r': ch = '\r'; i++;break;
+                    case 't': ch = '\t'; i++;break;
+                    case 'x': ch = (char)Integer.parseInt(""+ initString.charAt(i+2)+initString.charAt(i+3),16); i+=3;break;
+                }
+                stringBuilder.append(ch);
+            } else {
+                stringBuilder.append(initString.charAt(i));
+            }
+        }
+        return new Token(TokenType.STRING, stringBuilder.toString(), position, currentPosition);
+    }
+
     private Token dealWithFloat(StringBuilder builder, Position position, Position currentPosition) {
         return new Token(TokenType.DOUBLE, Double.parseDouble(builder.toString()), position, currentPosition);
     }
@@ -343,7 +366,7 @@ public class Tokenizer {
                     state = DFAState.STRING_VALUE_ESCAPE_STATE;
                     builder.append(currentChar);
                 } else if (currentChar == '"') {
-                    return new Token(TokenType.STRING, builder.toString(), position, currentPosition);
+                    return dealWithString(builder,position,currentPosition);
                 } else {
                     throw new CompileException(ExceptionString.IllegalInput, currentPosition);
                 }
