@@ -43,9 +43,9 @@ public class App {
             return;
         }
         String helpString = "Usage:\n" +
-                "  cc0 [options] input [-o file]\n" +
+                "  java -jar cc0 [options] input [-o file]\n" +
                 "or \n" +
-                "  cc0 [-h]\n" +
+                "  java -jar cc0 [-h]\n" +
                 "Options:\n" +
                 "  -s        将输入的 c0 源代码翻译为文本汇编文件\n" +
                 "  -c        将输入的 c0 源代码翻译为二进制目标文件\n" +
