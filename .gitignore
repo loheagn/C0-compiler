@@ -3,4 +3,5 @@
 !pom.xml
 !README.md
 !.gitignore
+!compile.sh
 test
