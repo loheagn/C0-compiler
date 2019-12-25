@@ -16,7 +16,8 @@ public class InstructionBlock {
     public void addInstructionBlock(InstructionBlock instructionBlock){
         instructions.addAll(instructionBlock.getInstructions());
         length += instructionBlock.getLength();
-        type = instructionBlock.getType();
+        if(instructionBlock.getType()!=null)
+            type = instructionBlock.getType();
     }
 
     public void addInstruction(Instruction instruction) {

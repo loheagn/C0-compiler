@@ -1,5 +1,10 @@
 package com.loheagn.semanticAnalysis;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.loheagn.utils.NumberToBytes;
+
 public class Instruction {
     private OperationType operation;
     private Integer num1;
@@ -8,8 +13,10 @@ public class Instruction {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder().append(operation.getValue());
-        if (num1 != null) builder.append(" ").append(num1);
-        if (num2 != null) builder.append(", ").append(num2);
+        if (num1 != null)
+            builder.append(" ").append(num1);
+        if (num2 != null)
+            builder.append(", ").append(num2);
         return builder.toString();
     }
 
@@ -17,10 +24,20 @@ public class Instruction {
      * 为了防止生成指令的时候少些操作数,这里要求必须给出num1和num2的值,如果没有,则要显式给出null
      */
     public Instruction(OperationType operation, Integer num1, Integer num2) {
-        CodeStack.offset ++;
+        CodeStack.offset++;
         this.operation = operation;
         this.num1 = num1;
         this.num2 = num2;
+    }
+
+    public List<Byte> toBytes() {
+        List<Byte> result = new ArrayList<>();
+        result.add(operation.getByteValue());
+        if (num1 != null)
+            result.addAll(NumberToBytes.numberToBytes(num1, operation.getLength1()));
+        if (num2 != null)
+            result.addAll(NumberToBytes.numberToBytes(num2, operation.getLength2()));
+        return result;
     }
 
     public int getLength() {

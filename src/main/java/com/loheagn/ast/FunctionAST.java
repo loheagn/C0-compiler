@@ -31,6 +31,20 @@ public class FunctionAST extends AST {
         this.compoundStatementAST = compoundStatementAST;
     }
 
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @return the functionType
+     */
+    public VariableType getFunctionType() {
+        return functionType;
+    }
+
     public InstructionBlock generateInstructions() throws CompileException {
         Stack.isFunctionCompoundStatement = true;
         // 新的栈帧开始
@@ -42,7 +56,7 @@ public class FunctionAST extends AST {
         // 填函数表
         Function function = new Function();
         function.setName(new Parameter(functionType, name));
-        for(Parameter parameter : parameters){
+        for (Parameter parameter : parameters) {
             function.addParameter(new Parameter(parameter.getVariableType(), parameter.getName()));
         }
         Table.addFunction(function);
@@ -52,13 +66,17 @@ public class FunctionAST extends AST {
         // 新的变量level层级
         Stack.newLevel();
         int offset = 0; // 参数相对于BP指针的偏移
-        for(Parameter parameter:parameters){
-            Variable variable = new Variable(parameter.getVariableType(), parameter.getName(),offset,1);
-            if(parameter.getVariableType()== VariableType.DOUBLE) offset += Stack.doubleOffset;
-            else offset += Stack.intOffset;
+        for (Parameter parameter : parameters) {
+            Variable variable = new Variable(parameter.getVariableType(), parameter.getName(), offset, 1);
+            if (parameter.getVariableType() == VariableType.DOUBLE)
+                offset += Stack.doubleOffset;
+            else
+                offset += Stack.intOffset;
             Stack.push(parameter.getVariableType());
-            if(parameter.isConst()) variable.setConst(true);
-            else variable.setConst(false);
+            if (parameter.isConst())
+                variable.setConst(true);
+            else
+                variable.setConst(false);
             Table.addVariable(variable);
         }
         InstructionBlock instructionBlock = new InstructionBlock();
@@ -67,11 +85,11 @@ public class FunctionAST extends AST {
         return instructionBlock;
     }
 
-    public List<String> instructionsToStringList() {
+    List<String> instructionsToStringList() {
         List<String> result = new ArrayList<String>();
         result.add(name + ":");
         List<Instruction> instructionList = this.generateInstructions().getInstructions();
-        for(int i = 0;i<instructionList.size();i++) {
+        for (int i = 0; i < instructionList.size(); i++) {
             result.add("" + i + " " + instructionList.get(i).toString());
         }
         return result;

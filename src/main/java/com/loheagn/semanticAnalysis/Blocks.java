@@ -185,7 +185,9 @@ public class Blocks {
     }
 
     public static InstructionBlock printSpace() throws CompileException {
-        return printChar(32);
+        InstructionBlock instructionBlock = new InstructionBlock();
+        instructionBlock.addInstruction(new Instruction(OperationType.printl,null,null));
+        return instructionBlock;
     }
 
     public static InstructionBlock printLine() throws CompileException {
@@ -318,7 +320,7 @@ public class Blocks {
                 instructionBlock.addInstruction(new Instruction(OperationType.ret,null,null));
                 break;
             case CHAR:
-                instructionBlock.addInstruction(new Instruction(OperationType.cret, null,null));
+                instructionBlock.addInstruction(new Instruction(OperationType.aret, null,null));
                 break;
             case DOUBLE:
                 instructionBlock.addInstruction(new Instruction(OperationType.dret,null,null));
@@ -341,7 +343,7 @@ public class Blocks {
                 instructionBlock.addInstruction(new Instruction(OperationType.dret,null,null));
             } else if(variableType == VariableType.CHAR) {
                 instructionBlock.addInstructionBlock(castTopType(VariableType.INT, VariableType.CHAR));
-                instructionBlock.addInstruction(new Instruction(OperationType.cret,null,null));
+                instructionBlock.addInstruction(new Instruction(OperationType.aret,null,null));
             } else {
                 instructionBlock.addInstruction(new Instruction(OperationType.iret,null,null));
             }

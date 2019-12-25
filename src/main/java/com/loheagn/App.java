@@ -4,11 +4,10 @@ import com.loheagn.ast.C0ProgramAST;
 import com.loheagn.grammaAnalysis.GrammaAnalyser;
 import com.loheagn.tokenizer.Tokenizer;
 import com.loheagn.utils.CompileException;
+import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 import org.apache.commons.cli.*;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
 
 /**
@@ -18,10 +17,17 @@ public class App {
 
     private static String inFileName;
 
-    private static List<String> compile()  {
+    private static C0ProgramAST generateC0ProgramAST() {
         GrammaAnalyser grammaAnalyser = new GrammaAnalyser(new Tokenizer().getAllTokens(inFileName));
-        C0ProgramAST c0ProgramAST = grammaAnalyser.C0Program();
-        return c0ProgramAST.generateInstructionsString();
+        return grammaAnalyser.C0Program();
+    }
+
+    private static List<String> compileASM()  {
+        return generateC0ProgramAST().generateInstructionsString();
+    }
+
+    private static List<Byte> compileBinary() {
+        return generateC0ProgramAST().generateInstructionsBytes();
     }
 
     public static void main(String[] args){
@@ -30,40 +36,46 @@ public class App {
         options.addOption(Option.builder("c").hasArg(false).required(false).desc("将输入的 c0 源代码翻译为二进制目标文件").build());
         options.addOption(Option.builder("s").hasArg(false).required(false).desc("将输入的 c0 源代码翻译为文本汇编文件").build());
         options.addOption(Option.builder("o").hasArg(true).required(false).desc("输出到指定的文件 file").build());
-        CommandLine commandLine = null;
+        CommandLine commandLine;
         try {
             commandLine = new DefaultParser().parse(options, args);
         } catch (ParseException e) {
             System.out.println("命令行参数解析错误.");
             return;
         }
+        String helpString = "Usage:\n" +
+                "  cc0 [options] input [-o file]\n" +
+                "or \n" +
+                "  cc0 [-h]\n" +
+                "Options:\n" +
+                "  -s        将输入的 c0 源代码翻译为文本汇编文件\n" +
+                "  -c        将输入的 c0 源代码翻译为二进制目标文件\n" +
+                "  -h        显示关于编译器使用的帮助\n" +
+                "  -o file   输出到指定的文件 file";
         if (commandLine.hasOption("h")) {
-            System.out.println("Usage:\n" +
-                    "  cc0 [options] input [-o file]\n" +
-                    "or \n" +
-                    "  cc0 [-h]\n" +
-                    "Options:\n" +
-                    "  -s        将输入的 c0 源代码翻译为文本汇编文件\n" +
-                    "  -c        将输入的 c0 源代码翻译为二进制目标文件\n" +
-                    "  -h        显示关于编译器使用的帮助\n" +
-                    "  -o file   输出到指定的文件 file");
+            System.out.println(helpString);
             return;
         }
         try {
-            String outFileName = "out";
             inFileName = commandLine.getArgList().get(0);
+            String outFileName = "out";
             if(commandLine.hasOption("o")){
                 outFileName = commandLine.getOptionValue("o");
             }
-            List<String> instructions = compile();
             if(commandLine.hasOption("s")){
+                List<String> instructions = compileASM();
                 BufferedWriter writer = new BufferedWriter(new FileWriter(outFileName));
                 for(String s:instructions){
                     writer.write(s+"\n");
                 }
                 writer.close();
-            } else if(commandLine.hasOption("o")) {
-                // todo
+            } else if(commandLine.hasOption("c")) {
+                List<Byte> bytes = compileBinary();
+                DataOutputStream outputStream = new DataOutputStream(new FileOutputStream(outFileName));
+                for(Byte byte1: bytes){
+                    outputStream.write(byte1);
+                }
+                outputStream.close();
             }
         } catch (CompileException e){
             System.out.println(e.toString());
@@ -71,17 +83,10 @@ public class App {
         } catch (IOException e) {
             System.out.println("文件操作错误.");
             System.exit(1);
-//        } catch (Exception e) {
-//            System.out.println("Usage:\n" +
-//                    "  cc0 [options] input [-o file]\n" +
-//                    "or \n" +
-//                    "  cc0 [-h]\n" +
-//                    "Options:\n" +
-//                    "  -s        将输入的 c0 源代码翻译为文本汇编文件\n" +
-//                    "  -c        将输入的 c0 源代码翻译为二进制目标文件\n" +
-//                    "  -h        显示关于编译器使用的帮助\n" +
-//                    "  -o file   输出到指定的文件 file");
-//            System.exit(1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(helpString);
+            System.exit(1);
         }
     }
 }

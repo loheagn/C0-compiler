@@ -7,7 +7,7 @@ public class Function {
     private Parameter name;
     private List<Parameter> parameters = new ArrayList<Parameter>();
 
-    public void addParameter(Parameter parameter){
+    public void addParameter(Parameter parameter) {
         this.parameters.add(parameter);
     }
 
@@ -27,13 +27,19 @@ public class Function {
         this.parameters = parameters;
     }
 
+    public int getParametersLength() {
+        int parameters_count = 0;
+        for (Parameter parameter : parameters) {
+            if (parameter.getVariableType() == VariableType.DOUBLE)
+                parameters_count += Stack.doubleOffset;
+            else
+                parameters_count += Stack.intOffset;
+        }
+        return parameters_count;
+    }
+
     @Override
     public String toString() {
-        int parameters_count = 0;
-        for(Parameter parameter : parameters) {
-            if(parameter.getVariableType() == VariableType.DOUBLE) parameters_count += Stack.doubleOffset;
-            else parameters_count += Stack.intOffset;
-        }
-        return parameters_count + " 1";
+        return getParametersLength() + " 1";
     }
 }

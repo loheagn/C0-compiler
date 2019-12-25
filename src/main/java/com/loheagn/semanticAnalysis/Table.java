@@ -11,16 +11,17 @@ class Identifier {
     String name;
     int level;
     Object what;
+
     Identifier(String name, int level, Object what) {
         this.name = name;
         this.level = level;
-        this.what  = what;
+        this.what = what;
     }
 }
 
 public class Table {
 
-//    private static List<Identifier> variableTable = new ArrayList<Identifier>();
+    // private static List<Identifier> variableTable = new ArrayList<Identifier>();
     private static List<Function> functionTable = new ArrayList<Function>();
     private static List<ConstIdentifier> constTable = new ArrayList<ConstIdentifier>();
 
@@ -28,11 +29,14 @@ public class Table {
 
     /**
      * 向标识符表中插入一个变量
-     * @param variable    要插入的变量
+     * 
+     * @param variable 要插入的变量
      */
     public static void addVariable(Variable variable) throws CompileException {
-        for(int i = identifierTable.size()-1; i>=0; i--) {
-            if(identifierTable.get(i).level == variable.getLevel() && variable.getName().equals(identifierTable.get(i).name)) throw new CompileException(ExceptionString.IdentifierDuplicateDefinition);
+        for (int i = identifierTable.size() - 1; i >= 0; i--) {
+            if (identifierTable.get(i).level == variable.getLevel()
+                    && variable.getName().equals(identifierTable.get(i).name))
+                throw new CompileException(ExceptionString.IdentifierDuplicateDefinition);
         }
         identifierTable.add(new Identifier(variable.getName(), variable.getLevel(), variable));
     }
@@ -40,12 +44,13 @@ public class Table {
     /**
      * 获取一个变量
      */
-    public static Variable getVariable (String name) throws CompileException {
-        for(int i = identifierTable.size()-1; i>=0; i--) {
-            if(name.equals(identifierTable.get(i).name)){
-                if(identifierTable.get(i).what instanceof Variable)
+    public static Variable getVariable(String name) throws CompileException {
+        for (int i = identifierTable.size() - 1; i >= 0; i--) {
+            if (name.equals(identifierTable.get(i).name)) {
+                if (identifierTable.get(i).what instanceof Variable)
                     return (Variable) identifierTable.get(i).what;
-                else throw new CompileException(ExceptionString.IdentifierNotDefined);
+                else
+                    throw new CompileException(ExceptionString.IdentifierNotDefined);
             }
         }
         throw new CompileException(ExceptionString.IdentifierNotDefined);
@@ -55,36 +60,43 @@ public class Table {
      * 弹出当前变量表中所有最高层级的变量,用于退出一个大括号结构的时候使用
      */
     public static void popLocalVariables() {
-        if(identifierTable.size()<=0) return;
+        if (identifierTable.size() <= 0)
+            return;
         final int level = Stack.getLevel();
-        identifierTable = identifierTable.stream().filter(identifier -> !(identifier.level==level && identifier.what instanceof Variable)).collect(Collectors.toList());
+        identifierTable = identifierTable.stream()
+                .filter(identifier -> !(identifier.level == level && identifier.what instanceof Variable))
+                .collect(Collectors.toList());
     }
 
     public static int addConst(ConstIdentifier constIdentifier) {
         constTable.add(constIdentifier);
-        return constTable.size()-1;
+        return constTable.size() - 1;
     }
 
     public static int getConstIndex(Object o) throws CompileException {
-        for(ConstIdentifier identifier:constTable){
-            if(identifier.getValue().equals(o)) return constTable.indexOf(identifier);
+        for (ConstIdentifier identifier : constTable) {
+            if (identifier.getValue().equals(o))
+                return constTable.indexOf(identifier);
         }
         throw new CompileException(ExceptionString.ConstNotFound);
     }
 
-    public static void addFunction(Function function)throws CompileException {
-        for(int i = identifierTable.size()-1; i>=0; i--) {
-            if(identifierTable.get(i).level == 0 && function.getName().getName().equals(identifierTable.get(i).name)) throw new CompileException(ExceptionString.IdentifierDuplicateDefinition);
+    public static void addFunction(Function function) throws CompileException {
+        for (int i = identifierTable.size() - 1; i >= 0; i--) {
+            if (identifierTable.get(i).level == 0 && function.getName().getName().equals(identifierTable.get(i).name))
+                throw new CompileException(ExceptionString.IdentifierDuplicateDefinition);
         }
         identifierTable.add(new Identifier(function.getName().getName(), 0, function));
         functionTable.add(function);
     }
 
     public static Function getFunction(String name) throws CompileException {
-        for(int i = identifierTable.size()-1;i>=0;i--) {
-            if(identifierTable.get(i).name.equals(name)) {
-                if(identifierTable.get(i).what instanceof  Function) return (Function)identifierTable.get(i).what;
-                else throw new CompileException(ExceptionString.FunctionNotFound);
+        for (int i = identifierTable.size() - 1; i >= 0; i--) {
+            if (identifierTable.get(i).name.equals(name)) {
+                if (identifierTable.get(i).what instanceof Function)
+                    return (Function) identifierTable.get(i).what;
+                else
+                    throw new CompileException(ExceptionString.FunctionNotFound);
             }
         }
         throw new CompileException(ExceptionString.FunctionNotFound);
@@ -94,24 +106,39 @@ public class Table {
         return functionTable.indexOf(getFunction(name));
     }
 
-    public static List<String> generateConstTable(){
+    public static List<String> generateConstTable() {
         List<String> result = new ArrayList<String>();
         result.add(".constants:");
-        for(ConstIdentifier constIdentifier:constTable) {
-            result.add(constTable.indexOf(constIdentifier)+" " + constIdentifier.toString());
+        for (ConstIdentifier constIdentifier : constTable) {
+            result.add(constTable.indexOf(constIdentifier) + " " + constIdentifier.toString());
         }
         return result;
     }
 
-    public static List<String> generateFunctionTable () throws CompileException {
+    public static List<String> generateFunctionTable() throws CompileException {
         boolean hasMain = false;
         List<String> result = new ArrayList<String>();
         result.add(".functions:");
-        for(Function function : functionTable) {
-            result.add("" + functionTable.indexOf(function) + " " + getConstIndex(function.getName().getName()) + " " + function.toString());
-            if(function.getName().getName().equals("main")) hasMain = true;
+        for (Function function : functionTable) {
+            result.add("" + functionTable.indexOf(function) + " " + getConstIndex(function.getName().getName()) + " "
+                    + function.toString());
+            if (function.getName().getName().equals("main"))
+                hasMain = true;
         }
-        if(!hasMain) throw new CompileException(ExceptionString.NoMain);
+        if (!hasMain)
+            throw new CompileException(ExceptionString.NoMain);
+        return result;
+    }
+
+    public static int getConstTableSize() {
+        return constTable.size();
+    }
+
+    public static List<Byte> generateConstTableBytes() {
+        List<Byte> result = new ArrayList<>();
+        for (ConstIdentifier constIdentifier : constTable) {
+            result.addAll(constIdentifier.toBytes());
+        }
         return result;
     }
 }
