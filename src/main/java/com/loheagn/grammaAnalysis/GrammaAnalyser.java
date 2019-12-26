@@ -625,7 +625,7 @@ public class GrammaAnalyser {
      */
     private CastExpressionAST castExpression() throws CompileException {
         CastExpressionAST castExpressionAST = new CastExpressionAST();
-        TokenType typeSpecifier = null;
+        List<TokenType> typeSpecifiers = new ArrayList<>();
         while (true) {
             Token token = nextToken();
             if (token == null) throw new CompileException(ExceptionString.ExpressionIncomplete, position);
@@ -642,12 +642,12 @@ public class GrammaAnalyser {
                 break;
             }
             if (token.getType() == TokenType.VOID) throw new CompileException(ExceptionString.CastToVoid, position);
-            if (typeSpecifier == null) typeSpecifier = token.getType();
+            typeSpecifiers.add(token.getType());
             token = nextToken();
             if (token == null || token.getType() != TokenType.RIGHT_PARE)
                 throw new CompileException(ExceptionString.NoRightPare, position);
         }
-        castExpressionAST.setTypeSpecifiers(typeSpecifier);
+        castExpressionAST.setTypeSpecifiers(typeSpecifiers);
         castExpressionAST.setUnaryExpressionAST(unaryExpression());
         return castExpressionAST;
     }

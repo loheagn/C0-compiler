@@ -6,32 +6,30 @@ import com.loheagn.semanticAnalysis.VariableType;
 import com.loheagn.tokenizer.TokenType;
 import com.loheagn.utils.CompileException;
 
+import java.util.List;
+
 public class CastExpressionAST extends ExpressionAST {
-    private TokenType typeSpecifiers;
+    private List<TokenType> typeSpecifiers;
     private UnaryExpressionAST unaryExpressionAST;
 
 
     public InstructionBlock generateInstructions() throws CompileException {
-        VariableType type = null;
-        if(typeSpecifiers!=null) {
-            type=VariableType.getVariableType(this.typeSpecifiers.getValue());
-        }
         InstructionBlock instructionBlock = new InstructionBlock();
         InstructionBlock expressionBlock = unaryExpressionAST.generateInstructions();
         instructionBlock.addInstructionBlock(expressionBlock);
-        if(type!=null) {
-            instructionBlock.addInstructionBlock(Blocks.castTopType(expressionBlock.getType(), type));
-            instructionBlock.setType(type);
+        for(TokenType tokenType : typeSpecifiers){
+            VariableType variableType = VariableType.getVariableType(tokenType.getValue());
+            instructionBlock.addInstructionBlock(Blocks.castTopType(instructionBlock.getType(),variableType));
         }
         return instructionBlock;
     }
 
-    public TokenType getTypeSpecifiers() {
-        return typeSpecifiers;
+    public void setTypeSpecifiers(List<TokenType> typeSpecifiers) {
+        this.typeSpecifiers = typeSpecifiers;
     }
 
-    public void setTypeSpecifiers(TokenType typeSpecifiers) {
-        this.typeSpecifiers = typeSpecifiers;
+    public List<TokenType> getTypeSpecifiers() {
+        return typeSpecifiers;
     }
 
     public UnaryExpressionAST getUnaryExpressionAST() {
