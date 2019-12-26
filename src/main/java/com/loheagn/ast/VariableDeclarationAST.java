@@ -19,8 +19,8 @@ public class VariableDeclarationAST extends AST {
     private ExpressionAST expressionAST;
 
     public InstructionBlock generateInstructions() throws CompileException {
-        if(this.type == VariableType.VOID) throw new CompileException(ExceptionString.VoidVariable);
-        if(isConst && expressionAST == null) throw new CompileException(ExceptionString.ConstVariableNeedValue);
+        if (this.type == VariableType.VOID) throw new CompileException(ExceptionString.VoidVariable);
+        if (isConst && expressionAST == null) throw new CompileException(ExceptionString.ConstVariableNeedValue);
         InstructionBlock instructionBlock = new InstructionBlock();
         // 填变量表
         int offset = Stack.getOffset();
@@ -31,7 +31,7 @@ public class VariableDeclarationAST extends AST {
         instructionBlock.addInstructionBlock(Blocks.loadAddress(identifier));
         // 计算表达式的值,最终给的结果肯定是放在栈顶上
         InstructionBlock expressionInstructionBlock;
-        if(expressionAST!=null)
+        if (expressionAST != null)
             expressionInstructionBlock = expressionAST.generateInstructions();
         else {
             expressionInstructionBlock = Blocks.pushZero();

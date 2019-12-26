@@ -29,34 +29,35 @@ public class UnaryExpressionAST extends ExpressionAST {
     public InstructionBlock generateInstructions() throws CompileException {
         InstructionBlock instructionBlock = new InstructionBlock();
         InstructionBlock expression = new InstructionBlock();
-        if(primaryExpression instanceof ExpressionAST) {
+        if (primaryExpression instanceof ExpressionAST) {
             expression = ((ExpressionAST) primaryExpression).generateInstructions();
-        } else if(primaryExpression instanceof String) {
-            expression = Blocks.loadIdentifier((String)primaryExpression);
-        } else if(primaryExpression instanceof Integer) {
-            expression.addInstruction(new Instruction(OperationType.ipush, (Integer)primaryExpression, null));
+        } else if (primaryExpression instanceof String) {
+            expression = Blocks.loadIdentifier((String) primaryExpression);
+        } else if (primaryExpression instanceof Integer) {
+            expression.addInstruction(new Instruction(OperationType.ipush, (Integer) primaryExpression, null));
             Stack.push(Stack.intOffset);
             expression.setType(VariableType.INT);
-        } else if(primaryExpression instanceof Character) {
-            expression.addInstruction(new Instruction(OperationType.ipush, new Integer((Character)primaryExpression),null));
-            expression.addInstruction(new Instruction(OperationType.i2c,null, null));
+        } else if (primaryExpression instanceof Character) {
+            expression.addInstruction(new Instruction(OperationType.ipush, new Integer((Character) primaryExpression), null));
+            expression.addInstruction(new Instruction(OperationType.i2c, null, null));
             Stack.push(Stack.intOffset);
             expression.setType(VariableType.CHAR);
-        } else if(primaryExpression instanceof Double) {
-            int index = Table.addConst(new ConstIdentifier(primaryExpression,TokenType.DOUBLE));
+        } else if (primaryExpression instanceof Double) {
+            int index = Table.addConst(new ConstIdentifier(primaryExpression, TokenType.DOUBLE));
             expression.addInstruction(new Instruction(OperationType.loadc, index, null));
             Stack.push(Stack.doubleOffset);
             expression.setType(VariableType.DOUBLE);
-        } else{
+        } else {
             assert primaryExpression instanceof FunctionCallStatementAST;
             expression = ((FunctionCallStatementAST) primaryExpression).generateInstructions();
-            if(expression.getType() == VariableType.VOID) throw new CompileException(ExceptionString.ComputeVoid);
+            if (expression.getType() == VariableType.VOID) throw new CompileException(ExceptionString.ComputeVoid);
         }
         instructionBlock.addInstructionBlock(expression);
         instructionBlock.setType(expression.getType());
-        if(operator !=null && operator == TokenType.MINUS) {
-            if(instructionBlock.getType() == VariableType.DOUBLE) instructionBlock.addInstruction(new Instruction(OperationType.dneg,null,null));
-            else instructionBlock.addInstruction(new Instruction(OperationType.ineg, null,null));
+        if (operator != null && operator == TokenType.MINUS) {
+            if (instructionBlock.getType() == VariableType.DOUBLE)
+                instructionBlock.addInstruction(new Instruction(OperationType.dneg, null, null));
+            else instructionBlock.addInstruction(new Instruction(OperationType.ineg, null, null));
         }
         return instructionBlock;
     }

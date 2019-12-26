@@ -6,12 +6,13 @@ public class Parameter {
     private VariableType variableType;
     private String name;
 
-    public Parameter (VariableType type, String name) {
+    public Parameter(VariableType type, String name) {
         this.variableType = type;
         this.name = name;
     }
 
-    public Parameter () {}
+    public Parameter() {
+    }
 
     public boolean isConst() {
         return isConst;

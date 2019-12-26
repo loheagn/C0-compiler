@@ -16,7 +16,7 @@ public class Stack {
     private static int BP = 0;
     private static int SP = 0;
 
-    public static Position position = new Position(0,0);
+    public static Position position = new Position(0, 0);
 
     private static int level = 0;
 
@@ -24,7 +24,7 @@ public class Stack {
      * 创建一个新的栈帧,这时候需要把BP和SP都置为0
      */
     public static void newStack() {
-        BP=SP = 0;
+        BP = SP = 0;
     }
 
     /**
@@ -45,7 +45,7 @@ public class Stack {
      * 获取当前变量的位置
      */
     public static int getOffset() {
-        return SP-BP;
+        return SP - BP;
     }
 
     /**
@@ -60,14 +60,14 @@ public class Stack {
     }
 
     public static void pop(VariableType variableType) {
-        if(variableType == VariableType.VOID) pop(0);
-        else if(variableType == VariableType.DOUBLE) pop(doubleOffset);
+        if (variableType == VariableType.VOID) pop(0);
+        else if (variableType == VariableType.DOUBLE) pop(doubleOffset);
         else pop(intOffset);
     }
 
     public static void push(VariableType type) {
-        if(type == VariableType.VOID) push(0);
-        else if(type == VariableType.DOUBLE) push(doubleOffset);
+        if (type == VariableType.VOID) push(0);
+        else if (type == VariableType.DOUBLE) push(doubleOffset);
         else push(intOffset);
     }
 

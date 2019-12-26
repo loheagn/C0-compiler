@@ -9,7 +9,7 @@ public class Variable {
     private Number value;   // 该标识符当前的值
     private boolean isConst;
 
-    public Variable(VariableType type, String name, int offset, int level){
+    public Variable(VariableType type, String name, int offset, int level) {
         this.type = type;
         this.name = name;
         this.offset = offset;
@@ -71,7 +71,7 @@ public class Variable {
 
     @Override
     public boolean equals(Object obj) {
-        if(!(obj instanceof Variable)) return false;
+        if (!(obj instanceof Variable)) return false;
         Variable variable = (Variable) obj;
         return variable.getName().equals(name);
     }

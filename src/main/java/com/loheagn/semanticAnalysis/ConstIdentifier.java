@@ -35,17 +35,17 @@ public class ConstIdentifier {
 
     List<Byte> toBytes() {
         short typeNumber = 0;
-        if(type== TokenType.INT) typeNumber = 1;
-        else if(type == TokenType.DOUBLE) typeNumber = 2;
+        if (type == TokenType.INT) typeNumber = 1;
+        else if (type == TokenType.DOUBLE) typeNumber = 2;
         List<Byte> result = new ArrayList<>(NumberToBytes.numberToBytes(typeNumber, 1));
-        if(type == TokenType.STRING){
+        if (type == TokenType.STRING) {
             String string = (String) value;
-            result.addAll(NumberToBytes.numberToBytes(string.length(),2));
+            result.addAll(NumberToBytes.numberToBytes(string.length(), 2));
             result.addAll(Arrays.asList(ArrayUtils.toObject(string.getBytes())));
-        } else if(type == TokenType.DOUBLE) {
-            result.addAll(NumberToBytes.numberToBytes(((Double)value),8));
-        } else{
-            result.addAll(NumberToBytes.numberToBytes(((Integer)value),4));
+        } else if (type == TokenType.DOUBLE) {
+            result.addAll(NumberToBytes.numberToBytes(((Double) value), 8));
+        } else {
+            result.addAll(NumberToBytes.numberToBytes(((Integer) value), 4));
         }
         return result;
     }

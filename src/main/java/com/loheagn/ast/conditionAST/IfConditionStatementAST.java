@@ -16,15 +16,15 @@ public class IfConditionStatementAST extends ConditionStatementAST {
         InstructionBlock instructionBlock = new InstructionBlock();
         instructionBlock.addInstructionBlock(conditionAST.generateInstructions());
         Stack.pop(instructionBlock.getType());
-        CodeStack.offset ++;
+        CodeStack.offset++;
         InstructionBlock ifStatementBlock = ifStatementAST.generateInstructions();
-        CodeStack.offset --;
+        CodeStack.offset--;
         instructionBlock.addInstructionBlock(Blocks.jumpNot(conditionAST.getRelationOperator(), CodeStack.offset + 2, instructionBlock.getType()));
         instructionBlock.addInstructionBlock(ifStatementBlock);
         if (elseStatementAST != null) {
             CodeStack.offset++;
             InstructionBlock elseBlock = elseStatementAST.generateInstructions();
-            CodeStack.offset --;
+            CodeStack.offset--;
             instructionBlock.addInstructionBlock(Blocks.jump(CodeStack.offset + 1));
             instructionBlock.addInstructionBlock(elseBlock);
         } else {

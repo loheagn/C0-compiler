@@ -15,10 +15,10 @@ public class AssignStatementAST extends ForUpdateExpressionAST {
 
     public InstructionBlock generateInstructions() throws CompileException {
         Variable variable = Table.getVariable(identifier);
-        if(variable.isConst()) throw new CompileException(ExceptionString.AssignToConst);
+        if (variable.isConst()) throw new CompileException(ExceptionString.AssignToConst);
         InstructionBlock instructionBlock = Blocks.loadAddress(variable);
         instructionBlock.addInstructionBlock(expressionAST.generateInstructions());
-        instructionBlock.addInstructionBlock(Blocks.castTopType(instructionBlock.getType(),variable.getType()));
+        instructionBlock.addInstructionBlock(Blocks.castTopType(instructionBlock.getType(), variable.getType()));
         instructionBlock.addInstructionBlock(Blocks.storeVariable(variable.getType()));
         return instructionBlock;
     }

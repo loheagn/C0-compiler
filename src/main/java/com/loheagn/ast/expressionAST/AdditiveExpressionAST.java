@@ -14,17 +14,18 @@ public class AdditiveExpressionAST extends ExpressionAST {
 
     public InstructionBlock generateInstructions() throws CompileException {
         InstructionBlock instructionBlock = new InstructionBlock();
-        if(multiplicativeExpressionASTList == null || multiplicativeExpressionASTList.size()<=0) return instructionBlock;
-       InstructionBlock expression1 = multiplicativeExpressionASTList.get(0).generateInstructions();
-       instructionBlock.addInstructionBlock(expression1);
-       InstructionBlock expression2;
-       for(int i = 0;i<this.operators.size();i++) {
-           expression2 = multiplicativeExpressionASTList.get(i+1).generateInstructions();
-           // 为了简便,我们对操作符左右两个表达式的结果都进行类型转换
-           instructionBlock.addInstructionBlock(Blocks.computeTwoExpressions(expression1, expression2, operators.get(i)));
-           // 准备下一次循环
-           expression1 = expression2;
-       }
+        if (multiplicativeExpressionASTList == null || multiplicativeExpressionASTList.size() <= 0)
+            return instructionBlock;
+        InstructionBlock expression1 = multiplicativeExpressionASTList.get(0).generateInstructions();
+        instructionBlock.addInstructionBlock(expression1);
+        InstructionBlock expression2;
+        for (int i = 0; i < this.operators.size(); i++) {
+            expression2 = multiplicativeExpressionASTList.get(i + 1).generateInstructions();
+            // 为了简便,我们对操作符左右两个表达式的结果都进行类型转换
+            instructionBlock.addInstructionBlock(Blocks.computeTwoExpressions(expression1, expression2, operators.get(i)));
+            // 准备下一次循环
+            expression1 = expression2;
+        }
         return instructionBlock;
     }
 

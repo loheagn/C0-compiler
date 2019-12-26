@@ -18,29 +18,29 @@ public class CompoundStatementAST extends StatementAST {
     public InstructionBlock generateInstructions() throws CompileException {
         InstructionBlock instructionBlock = new InstructionBlock();
         // new level
-        if(!Stack.isFunctionCompoundStatement) {
+        if (!Stack.isFunctionCompoundStatement) {
             Stack.newLevel();
             Stack.isFunctionCompoundStatement = false;
         } else {
             Stack.isFunctionCompoundStatement = false;
         }
-        for(VariableDeclarationAST variableDeclarationAST: variableDeclarationASTList) {
+        for (VariableDeclarationAST variableDeclarationAST : variableDeclarationASTList) {
             instructionBlock.addInstructionBlock(variableDeclarationAST.generateInstructions());
         }
-        for(StatementAST statementAST : statementASTList) {
+        for (StatementAST statementAST : statementASTList) {
             instructionBlock.addInstructionBlock(statementAST.generateInstructions());
         }
         // 清空本级作用域的变量表
         Table.popLocalVariables();
         // 释放栈上的内存
-        for(VariableDeclarationAST variableDeclarationAST:variableDeclarationASTList){
+        for (VariableDeclarationAST variableDeclarationAST : variableDeclarationASTList) {
             instructionBlock.addInstructionBlock(Blocks.free(variableDeclarationAST.getType()));
         }
         Stack.minusLevel();
         return instructionBlock;
     }
 
-    public void addVariableDeclarationAST(VariableDeclarationAST variableDeclarationAST){
+    public void addVariableDeclarationAST(VariableDeclarationAST variableDeclarationAST) {
         this.variableDeclarationASTList.add(variableDeclarationAST);
     }
 

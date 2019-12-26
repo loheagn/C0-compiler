@@ -18,7 +18,7 @@ public class ConditionAST extends AST {
         InstructionBlock expression1 = expressionAST1.generateInstructions();
         instructionBlock.addInstructionBlock(expression1);
         InstructionBlock expression2 = null;
-        if(expressionAST2!=null){
+        if (expressionAST2 != null) {
             expression2 = expressionAST2.generateInstructions();
         } else {
             expression2 = Blocks.pushZero();

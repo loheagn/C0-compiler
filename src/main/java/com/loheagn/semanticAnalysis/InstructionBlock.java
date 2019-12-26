@@ -8,15 +8,15 @@ public class InstructionBlock {
     private int length;
     private VariableType type;   // 这个指令块执行结束后,栈顶的值的类型
 
-    public InstructionBlock(){
+    public InstructionBlock() {
         instructions = new ArrayList<Instruction>();
         length = 0;
     }
 
-    public void addInstructionBlock(InstructionBlock instructionBlock){
+    public void addInstructionBlock(InstructionBlock instructionBlock) {
         instructions.addAll(instructionBlock.getInstructions());
         length += instructionBlock.getLength();
-        if(instructionBlock.getType()!=null)
+        if (instructionBlock.getType() != null)
             type = instructionBlock.getType();
     }
 

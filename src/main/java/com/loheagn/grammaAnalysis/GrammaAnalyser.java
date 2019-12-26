@@ -243,11 +243,10 @@ public class GrammaAnalyser {
         while (true) {
             token = nextToken();
             if (token == null) throw new CompileException(ExceptionString.MissingRightBrace, position);
-            else if (JudgeToken.isConstQualifier(token) || JudgeToken.isTypeSpecifier(token)){
+            else if (JudgeToken.isConstQualifier(token) || JudgeToken.isTypeSpecifier(token)) {
                 unreadToken();
                 compoundStatementAST.addVariableDeclarationASTList(variableDeclaration());
-            }
-            else {
+            } else {
                 unreadToken();
                 break;
             }
@@ -636,7 +635,7 @@ public class GrammaAnalyser {
             token = nextToken();
             if (token == null)
                 throw new CompileException(ExceptionString.ExpressionIncomplete, position);
-            if(!JudgeToken.isTypeSpecifier(token)) {
+            if (!JudgeToken.isTypeSpecifier(token)) {
                 unreadToken();
                 unreadToken();
                 break;

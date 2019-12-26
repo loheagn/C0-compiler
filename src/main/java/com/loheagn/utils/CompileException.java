@@ -20,7 +20,7 @@ public class CompileException extends RuntimeException {
 
     public CompileException(ExceptionString message) {
         this.message = message;
-        this.position = new Position(0,0);
+        this.position = new Position(0, 0);
     }
 
     @Override

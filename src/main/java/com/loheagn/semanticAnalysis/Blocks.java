@@ -6,7 +6,7 @@ import com.loheagn.utils.ExceptionString;
 
 public class Blocks {
 
-    public static InstructionBlock pushZero(){
+    public static InstructionBlock pushZero() {
         InstructionBlock instructionBlock = new InstructionBlock();
         instructionBlock.addInstruction(new Instruction(OperationType.iPush, 0, null));
         Stack.push(1);
@@ -16,29 +16,29 @@ public class Blocks {
 
     public static InstructionBlock castTopType(VariableType srcType, VariableType dstType) {
         InstructionBlock instructionBlock = new InstructionBlock();
-        if(srcType.equals(dstType)) {
+        if (srcType.equals(dstType)) {
             instructionBlock.setType(srcType);
         } else {
-            if(dstType == VariableType.CHAR) {
-                if(srcType == VariableType.INT){
+            if (dstType == VariableType.CHAR) {
+                if (srcType == VariableType.INT) {
                     instructionBlock.addInstruction(new Instruction(OperationType.i2c, null, null));
                     instructionBlock.setType(VariableType.CHAR);
-                } else if(srcType == VariableType.DOUBLE) {
-                    instructionBlock.addInstruction(new Instruction(OperationType.d2i, null,null));
+                } else if (srcType == VariableType.DOUBLE) {
+                    instructionBlock.addInstruction(new Instruction(OperationType.d2i, null, null));
                     Stack.pop(1);
                     instructionBlock.addInstruction(new Instruction(OperationType.i2c, null, null));
                     instructionBlock.setType(VariableType.CHAR);
                 }
-            } else if(dstType == VariableType.INT) {
-                if(srcType == VariableType.DOUBLE) {
+            } else if (dstType == VariableType.INT) {
+                if (srcType == VariableType.DOUBLE) {
                     instructionBlock.addInstruction(new Instruction(OperationType.d2i, null, null));
                     Stack.pop(1);
                     instructionBlock.setType(VariableType.INT);
-                } else if(srcType == VariableType.CHAR) {
+                } else if (srcType == VariableType.CHAR) {
                     instructionBlock.setType(VariableType.INT);
                 }
-            } else if(dstType == VariableType.DOUBLE) {
-                if(srcType == VariableType.CHAR || srcType == VariableType.INT) {
+            } else if (dstType == VariableType.DOUBLE) {
+                if (srcType == VariableType.CHAR || srcType == VariableType.INT) {
                     instructionBlock.addInstruction(new Instruction(OperationType.i2d, null, null));
                     Stack.push(1);
                     instructionBlock.setType(VariableType.DOUBLE);
@@ -49,41 +49,40 @@ public class Blocks {
     }
 
     /**
-     *
-     * @param operator  操作符
-     * @param type  要计算的两个值的类型
-     * @return  返回的指令集
+     * @param operator 操作符
+     * @param type     要计算的两个值的类型
+     * @return 返回的指令集
      */
     public static InstructionBlock computeTwoExpressions(TokenType operator, VariableType type) throws CompileException {
         InstructionBlock instructionBlock = new InstructionBlock();
-        if(operator == TokenType.PLUS) {
-            if(type == VariableType.DOUBLE) {
-                instructionBlock.addInstruction(new Instruction(OperationType.dadd,null,null));
+        if (operator == TokenType.PLUS) {
+            if (type == VariableType.DOUBLE) {
+                instructionBlock.addInstruction(new Instruction(OperationType.dadd, null, null));
             } else {
-                instructionBlock.addInstruction(new Instruction(OperationType.iadd,null, null));
+                instructionBlock.addInstruction(new Instruction(OperationType.iadd, null, null));
             }
         } else if (operator == TokenType.MINUS) {
-            if(type == VariableType.DOUBLE) {
-                instructionBlock.addInstruction(new Instruction(OperationType.dsub,null,null));
+            if (type == VariableType.DOUBLE) {
+                instructionBlock.addInstruction(new Instruction(OperationType.dsub, null, null));
             } else {
-                instructionBlock.addInstruction(new Instruction(OperationType.isub,null, null));
+                instructionBlock.addInstruction(new Instruction(OperationType.isub, null, null));
             }
-        } else if(operator == TokenType.MULTI) {
-            if(type == VariableType.DOUBLE) {
-                instructionBlock.addInstruction(new Instruction(OperationType.dmul,null,null));
+        } else if (operator == TokenType.MULTI) {
+            if (type == VariableType.DOUBLE) {
+                instructionBlock.addInstruction(new Instruction(OperationType.dmul, null, null));
             } else {
-                instructionBlock.addInstruction(new Instruction(OperationType.imul,null, null));
+                instructionBlock.addInstruction(new Instruction(OperationType.imul, null, null));
             }
-        } else if(operator == TokenType.DIV) {
-            if(type == VariableType.DOUBLE) {
-                instructionBlock.addInstruction(new Instruction(OperationType.ddiv,null,null));
+        } else if (operator == TokenType.DIV) {
+            if (type == VariableType.DOUBLE) {
+                instructionBlock.addInstruction(new Instruction(OperationType.ddiv, null, null));
             } else {
-                instructionBlock.addInstruction(new Instruction(OperationType.idiv,null, null));
+                instructionBlock.addInstruction(new Instruction(OperationType.idiv, null, null));
             }
         } else {
             throw new CompileException(ExceptionString.CanNotCompute);
         }
-        if(type == VariableType.DOUBLE) Stack.pop(Stack.doubleOffset);
+        if (type == VariableType.DOUBLE) Stack.pop(Stack.doubleOffset);
         else Stack.pop(Stack.intOffset);
         instructionBlock.setType(type);
         return instructionBlock;
@@ -111,10 +110,10 @@ public class Blocks {
         InstructionBlock instructionBlock = new InstructionBlock();
         Variable variable = Table.getVariable(name);
         instructionBlock.addInstructionBlock(loadAddress(variable));
-        if(variable.getType() == VariableType.DOUBLE) {
+        if (variable.getType() == VariableType.DOUBLE) {
             instructionBlock.addInstruction(new Instruction(OperationType.dload, null, null));
             Stack.push(Stack.doubleOffset - Stack.intOffset);
-        } else if(variable.getType() == VariableType.CHAR) {
+        } else if (variable.getType() == VariableType.CHAR) {
             instructionBlock.addInstruction(new Instruction(OperationType.aload, null, null));
         } else {
             instructionBlock.addInstruction(new Instruction(OperationType.iload, null, null));
@@ -125,8 +124,9 @@ public class Blocks {
 
     /**
      * 根据标识符的名字,加载一个变量的地址
-     * @param name  变量的名字
-     * @return  加载这个地址所需要的指令
+     *
+     * @param name 变量的名字
+     * @return 加载这个地址所需要的指令
      */
     public static InstructionBlock loadAddress(String name) throws CompileException {
         Variable variable = Table.getVariable(name);
@@ -138,7 +138,7 @@ public class Blocks {
      */
     public static InstructionBlock loadAddress(Variable variable) throws CompileException {
         int levelGap = 0;
-        if(variable.getLevel() == 0) levelGap = 1;
+        if (variable.getLevel() == 0) levelGap = 1;
         InstructionBlock instructionBlock = new InstructionBlock();
         instructionBlock.addInstruction(new Instruction(OperationType.loada, levelGap, variable.getOffset()));
         Stack.push(Stack.intOffset);
@@ -147,46 +147,47 @@ public class Blocks {
 
     public static InstructionBlock storeVariable(VariableType variableType) throws CompileException {
         InstructionBlock instructionBlock = new InstructionBlock();
-        if(variableType == VariableType.DOUBLE) {
-            instructionBlock.addInstruction(new Instruction(OperationType.dstore,null,null));
+        if (variableType == VariableType.DOUBLE) {
+            instructionBlock.addInstruction(new Instruction(OperationType.dstore, null, null));
             Stack.pop(Stack.doubleOffset + Stack.intOffset);
-        } else if(variableType == VariableType.CHAR) {
-            instructionBlock.addInstruction(new Instruction(OperationType.astore, null,null));
+        } else if (variableType == VariableType.CHAR) {
+            instructionBlock.addInstruction(new Instruction(OperationType.astore, null, null));
             Stack.pop(Stack.intOffset + Stack.intOffset);
         } else {
-            instructionBlock.addInstruction(new Instruction(OperationType.istore, null,null));
+            instructionBlock.addInstruction(new Instruction(OperationType.istore, null, null));
             Stack.pop(Stack.intOffset + Stack.intOffset);
         }
         instructionBlock.setType(VariableType.VOID);
         return instructionBlock;
     }
 
-    public static InstructionBlock mallocOnStack(VariableType variableType) throws  CompileException {
+    public static InstructionBlock mallocOnStack(VariableType variableType) throws CompileException {
         InstructionBlock instructionBlock = new InstructionBlock();
-        int size = variableType==VariableType.DOUBLE?Stack.doubleOffset:Stack.intOffset;
-        instructionBlock.addInstruction(new Instruction(OperationType.snew,size,null));
+        int size = variableType == VariableType.DOUBLE ? Stack.doubleOffset : Stack.intOffset;
+        instructionBlock.addInstruction(new Instruction(OperationType.snew, size, null));
         Stack.push(size);
         return instructionBlock;
     }
 
     public static InstructionBlock free(VariableType variableType) throws CompileException {
         InstructionBlock instructionBlock = new InstructionBlock();
-        if(variableType == VariableType.DOUBLE) instructionBlock.addInstruction(new Instruction(OperationType.pop2,null,null));
-        else instructionBlock.addInstruction(new Instruction(OperationType.pop,null,null));
+        if (variableType == VariableType.DOUBLE)
+            instructionBlock.addInstruction(new Instruction(OperationType.pop2, null, null));
+        else instructionBlock.addInstruction(new Instruction(OperationType.pop, null, null));
         Stack.pop(variableType);
         return instructionBlock;
     }
 
     public static InstructionBlock printString() throws CompileException {
         InstructionBlock instructionBlock = new InstructionBlock();
-        instructionBlock.addInstruction(new Instruction(OperationType.sprint, null,null));
+        instructionBlock.addInstruction(new Instruction(OperationType.sprint, null, null));
         Stack.pop(Stack.intOffset);
         return instructionBlock;
     }
 
     public static InstructionBlock printSpace() throws CompileException {
         InstructionBlock instructionBlock = new InstructionBlock();
-        instructionBlock.addInstruction(new Instruction(OperationType.printl,null,null));
+        instructionBlock.addInstruction(new Instruction(OperationType.printl, null, null));
         return instructionBlock;
     }
 
@@ -196,22 +197,22 @@ public class Blocks {
 
     public static InstructionBlock printChar(int ch) throws CompileException {
         InstructionBlock instructionBlock = new InstructionBlock();
-        instructionBlock.addInstruction(new Instruction(OperationType.ipush,ch,null));
-        instructionBlock.addInstruction(new Instruction(OperationType.i2c,null,null));
+        instructionBlock.addInstruction(new Instruction(OperationType.ipush, ch, null));
+        instructionBlock.addInstruction(new Instruction(OperationType.i2c, null, null));
         instructionBlock.addInstruction(new Instruction(OperationType.cprint, null, null));
         return instructionBlock;
     }
 
     public static InstructionBlock printValue(VariableType variableType) throws CompileException {
         InstructionBlock instructionBlock = new InstructionBlock();
-        if(variableType == VariableType.DOUBLE) {
-            instructionBlock.addInstruction(new Instruction(OperationType.dprint, null,null));
+        if (variableType == VariableType.DOUBLE) {
+            instructionBlock.addInstruction(new Instruction(OperationType.dprint, null, null));
             Stack.pop(Stack.doubleOffset);
-        } else if(variableType == VariableType.CHAR) {
-            instructionBlock.addInstruction(new Instruction(OperationType.cprint, null,null));
+        } else if (variableType == VariableType.CHAR) {
+            instructionBlock.addInstruction(new Instruction(OperationType.cprint, null, null));
             Stack.pop(Stack.intOffset);
-        } else if(variableType == VariableType.INT) {
-            instructionBlock.addInstruction(new Instruction(OperationType.iprint, null,null));
+        } else if (variableType == VariableType.INT) {
+            instructionBlock.addInstruction(new Instruction(OperationType.iprint, null, null));
             Stack.pop(Stack.intOffset);
         } else throw new CompileException(ExceptionString.Print);
         return instructionBlock;
@@ -219,14 +220,14 @@ public class Blocks {
 
     public static InstructionBlock scanValue(VariableType variableType) throws CompileException {
         InstructionBlock instructionBlock = new InstructionBlock();
-        if(variableType == VariableType.DOUBLE) {
-            instructionBlock.addInstruction(new Instruction(OperationType.dscan, null,null));
+        if (variableType == VariableType.DOUBLE) {
+            instructionBlock.addInstruction(new Instruction(OperationType.dscan, null, null));
             Stack.push(Stack.doubleOffset);
-        } else if(variableType == VariableType.CHAR) {
-            instructionBlock.addInstruction(new Instruction(OperationType.cscan, null,null));
+        } else if (variableType == VariableType.CHAR) {
+            instructionBlock.addInstruction(new Instruction(OperationType.cscan, null, null));
             Stack.push(Stack.intOffset);
-        } else if(variableType == VariableType.INT) {
-            instructionBlock.addInstruction(new Instruction(OperationType.iscan, null,null));
+        } else if (variableType == VariableType.INT) {
+            instructionBlock.addInstruction(new Instruction(OperationType.iscan, null, null));
             Stack.push(Stack.intOffset);
         } else throw new CompileException(ExceptionString.Scan);
         instructionBlock.setType(variableType);
@@ -235,13 +236,12 @@ public class Blocks {
 
     public static InstructionBlock cmp(VariableType variableType) throws CompileException {
         InstructionBlock instructionBlock = new InstructionBlock();
-        if(variableType == VariableType.DOUBLE) {
+        if (variableType == VariableType.DOUBLE) {
             instructionBlock.addInstruction(new Instruction(OperationType.dcmp, null, null));
-            Stack.pop(2*Stack.doubleOffset - Stack.intOffset);
-        }
-        else {
+            Stack.pop(2 * Stack.doubleOffset - Stack.intOffset);
+        } else {
             instructionBlock.addInstruction(new Instruction(OperationType.icmp, null, null));
-            Stack.pop(2*Stack.intOffset - Stack.intOffset);
+            Stack.pop(2 * Stack.intOffset - Stack.intOffset);
         }
         instructionBlock.setType(VariableType.INT);
         return instructionBlock;
@@ -270,7 +270,7 @@ public class Blocks {
                 operationType = OperationType.jge;
                 break;
         }
-        instructionBlock.addInstruction(new Instruction(operationType, offset,null));
+        instructionBlock.addInstruction(new Instruction(operationType, offset, null));
         return instructionBlock;
     }
 
@@ -297,19 +297,19 @@ public class Blocks {
                 operationType = OperationType.jl;
                 break;
         }
-        instructionBlock.addInstruction(new Instruction(operationType, offset,null));
+        instructionBlock.addInstruction(new Instruction(operationType, offset, null));
         return instructionBlock;
     }
 
     public static InstructionBlock jump(int offset) {
         InstructionBlock instructionBlock = new InstructionBlock();
-        instructionBlock.addInstruction(new Instruction(OperationType.jmp,offset,null));
+        instructionBlock.addInstruction(new Instruction(OperationType.jmp, offset, null));
         return instructionBlock;
     }
 
-    public static InstructionBlock nop(){
+    public static InstructionBlock nop() {
         InstructionBlock instructionBlock = new InstructionBlock();
-        instructionBlock.addInstruction(new Instruction(OperationType.nop,null,null));
+        instructionBlock.addInstruction(new Instruction(OperationType.nop, null, null));
         return instructionBlock;
     }
 
@@ -317,16 +317,16 @@ public class Blocks {
         InstructionBlock instructionBlock = new InstructionBlock();
         switch (type) {
             case VOID:
-                instructionBlock.addInstruction(new Instruction(OperationType.ret,null,null));
+                instructionBlock.addInstruction(new Instruction(OperationType.ret, null, null));
                 break;
             case CHAR:
-                instructionBlock.addInstruction(new Instruction(OperationType.aret, null,null));
+                instructionBlock.addInstruction(new Instruction(OperationType.aret, null, null));
                 break;
             case DOUBLE:
-                instructionBlock.addInstruction(new Instruction(OperationType.dret,null,null));
+                instructionBlock.addInstruction(new Instruction(OperationType.dret, null, null));
                 break;
             case INT:
-                instructionBlock.addInstruction(new Instruction(OperationType.iret,null,null));
+                instructionBlock.addInstruction(new Instruction(OperationType.iret, null, null));
                 break;
         }
         return instructionBlock;
@@ -334,18 +334,18 @@ public class Blocks {
 
     public static InstructionBlock returnBlockZero(VariableType variableType) {
         InstructionBlock instructionBlock = new InstructionBlock();
-        if(variableType == VariableType.VOID) {
-            instructionBlock.addInstruction(new Instruction(OperationType.ret, null,null));
+        if (variableType == VariableType.VOID) {
+            instructionBlock.addInstruction(new Instruction(OperationType.ret, null, null));
         } else {
             instructionBlock.addInstructionBlock(pushZero());
-            if(variableType == VariableType.DOUBLE) {
+            if (variableType == VariableType.DOUBLE) {
                 instructionBlock.addInstructionBlock(castTopType(VariableType.INT, VariableType.DOUBLE));
-                instructionBlock.addInstruction(new Instruction(OperationType.dret,null,null));
-            } else if(variableType == VariableType.CHAR) {
+                instructionBlock.addInstruction(new Instruction(OperationType.dret, null, null));
+            } else if (variableType == VariableType.CHAR) {
                 instructionBlock.addInstructionBlock(castTopType(VariableType.INT, VariableType.CHAR));
-                instructionBlock.addInstruction(new Instruction(OperationType.aret,null,null));
+                instructionBlock.addInstruction(new Instruction(OperationType.aret, null, null));
             } else {
-                instructionBlock.addInstruction(new Instruction(OperationType.iret,null,null));
+                instructionBlock.addInstruction(new Instruction(OperationType.iret, null, null));
             }
         }
         return instructionBlock;

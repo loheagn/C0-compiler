@@ -13,7 +13,7 @@ public class ScanStatementAST extends StatementAST {
     public InstructionBlock generateInstructions() throws CompileException {
         InstructionBlock instructionBlock = new InstructionBlock();
         Variable variable = Table.getVariable(this.variable);
-        if(variable.isConst()) throw new CompileException(ExceptionString.AssignToConst);
+        if (variable.isConst()) throw new CompileException(ExceptionString.AssignToConst);
         instructionBlock.addInstructionBlock(Blocks.loadAddress(variable));
         instructionBlock.addInstructionBlock(Blocks.scanValue(variable.getType()));
         instructionBlock.addInstructionBlock(Blocks.storeVariable(variable.getType()));

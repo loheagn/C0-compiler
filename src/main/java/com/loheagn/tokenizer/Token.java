@@ -19,20 +19,20 @@ public class Token {
         this.endPosition = endPosition;
     }
 
-    public String getStringValue(){
+    public String getStringValue() {
         return value.toString();
     }
 
     public int getIntValue() {
-        return (Integer)value;
+        return (Integer) value;
     }
 
     public double getDoubleValue() {
-        return (Double)value;
+        return (Double) value;
     }
 
     public Character getCharValue() {
-        return (Character)value;
+        return (Character) value;
     }
 
     @Override

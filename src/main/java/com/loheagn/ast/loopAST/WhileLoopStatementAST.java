@@ -16,23 +16,23 @@ public class WhileLoopStatementAST extends LoopStatementAST {
         int forOffset = CodeStack.offset;   // 也就是说,主体部分完成后,要跳转到这里重新执行条件语句判断执行
         InstructionBlock condition = null;
         InstructionBlock statement = null;
-        if(conditionAST!=null) {
+        if (conditionAST != null) {
             condition = conditionAST.generateInstructions();
             Stack.pop(Stack.intOffset);
         }
-        if(statementAST!=null) {
-            CodeStack.offset ++;
+        if (statementAST != null) {
+            CodeStack.offset++;
             statement = statementAST.generateInstructions();
-            CodeStack.offset --;
+            CodeStack.offset--;
         }
         InstructionBlock instructionBlock = new InstructionBlock();
-        if(condition!=null) {
+        if (condition != null) {
             instructionBlock.addInstructionBlock(condition);
             instructionBlock.addInstructionBlock(Blocks.jumpNot(conditionAST.getRelationOperator(), CodeStack.offset + 2, instructionBlock.getType()));     // 这里加2是因为还有两条跳转指令没有生成
         } else {
             instructionBlock.addInstructionBlock(Blocks.nop());
         }
-        if(statement!=null) {
+        if (statement != null) {
             instructionBlock.addInstructionBlock(statement);
         }
         instructionBlock.addInstructionBlock(Blocks.jump(forOffset));

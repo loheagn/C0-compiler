@@ -13,12 +13,14 @@ public class ReturnJumpStatementAST extends JumpStatementAST {
 
     public InstructionBlock generateInstructions() throws CompileException {
         InstructionBlock instructionBlock = new InstructionBlock();
-        if(expressionAST!=null) {
-            if(CodeStack.functionType == VariableType.VOID) throw new CompileException(ExceptionString.ReturnTypeError);
+        if (expressionAST != null) {
+            if (CodeStack.functionType == VariableType.VOID)
+                throw new CompileException(ExceptionString.ReturnTypeError);
             instructionBlock.addInstructionBlock(expressionAST.generateInstructions());
-            instructionBlock.addInstructionBlock(Blocks.castTopType(instructionBlock.getType(),CodeStack.functionType));
+            instructionBlock.addInstructionBlock(Blocks.castTopType(instructionBlock.getType(), CodeStack.functionType));
         } else {
-            if(CodeStack.functionType!=VariableType.VOID) throw new CompileException(ExceptionString.ReturnTypeError);
+            if (CodeStack.functionType != VariableType.VOID)
+                throw new CompileException(ExceptionString.ReturnTypeError);
         }
         instructionBlock.addInstructionBlock(Blocks.returnBlock(CodeStack.functionType));
         return instructionBlock;

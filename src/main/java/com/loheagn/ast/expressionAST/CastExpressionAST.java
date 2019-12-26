@@ -17,9 +17,9 @@ public class CastExpressionAST extends ExpressionAST {
         InstructionBlock instructionBlock = new InstructionBlock();
         InstructionBlock expressionBlock = unaryExpressionAST.generateInstructions();
         instructionBlock.addInstructionBlock(expressionBlock);
-        for(TokenType tokenType : typeSpecifiers){
+        for (TokenType tokenType : typeSpecifiers) {
             VariableType variableType = VariableType.getVariableType(tokenType.getValue());
-            instructionBlock.addInstructionBlock(Blocks.castTopType(instructionBlock.getType(),variableType));
+            instructionBlock.addInstructionBlock(Blocks.castTopType(instructionBlock.getType(), variableType));
         }
         return instructionBlock;
     }

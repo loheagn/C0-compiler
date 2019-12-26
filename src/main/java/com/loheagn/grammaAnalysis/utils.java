@@ -20,7 +20,7 @@ class JudgeToken {
 
     static boolean isMultiplicativeOperator(Token token) {
         TokenType type = token.getType();
-        return type==TokenType.MULTI || type==TokenType.DIV;
+        return type == TokenType.MULTI || type == TokenType.DIV;
     }
 
     static boolean isConstQualifier(Token token) {

@@ -65,7 +65,7 @@ public class C0ProgramAST {
             startBytes.addAll(instruction.toBytes());
         }
 
-        List<Byte> functionBytes = new ArrayList<>(NumberToBytes.numberToBytes(functionASTList.size(),2));
+        List<Byte> functionBytes = new ArrayList<>(NumberToBytes.numberToBytes(functionASTList.size(), 2));
         boolean hasMain = false;
         for (FunctionAST functionAST : this.functionASTList) {
             List<Instruction> functionInstructions = functionAST.generateInstructions().getInstructions();
@@ -77,9 +77,9 @@ public class C0ProgramAST {
             for (Instruction instruction : functionInstructions) {
                 functionBytes.addAll(instruction.toBytes());
             }
-            if(functionAST.getName().equals("main")) hasMain = true;
+            if (functionAST.getName().equals("main")) hasMain = true;
         }
-        if(!hasMain) throw new CompileException(ExceptionString.NoMain);
+        if (!hasMain) throw new CompileException(ExceptionString.NoMain);
 
         List<Byte> constBytes = new ArrayList<>(NumberToBytes.numberToBytes(Table.getConstTableSize(), 2));
         constBytes.addAll(Table.generateConstTableBytes());
@@ -88,9 +88,9 @@ public class C0ProgramAST {
         int versionNumber = 0x00000001;
 
         // magic number
-        List<Byte> result = new ArrayList<>(NumberToBytes.numberToBytes(magicNumber,4));
+        List<Byte> result = new ArrayList<>(NumberToBytes.numberToBytes(magicNumber, 4));
         // version
-        result.addAll(NumberToBytes.numberToBytes(versionNumber,4));
+        result.addAll(NumberToBytes.numberToBytes(versionNumber, 4));
         // const table
         result.addAll(constBytes);
         // start instructions

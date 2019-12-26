@@ -16,13 +16,14 @@ public class FunctionCallStatementAST extends ForUpdateExpressionAST {
     public InstructionBlock generateInstructions() throws CompileException {
         InstructionBlock instructionBlock = new InstructionBlock();
         Function function = Table.getFunction(identifier);
-        if(function.getParameters().size()!=expressionASTList.size()) throw new CompileException(ExceptionString.FunctionParametersNumberNotMatch);
+        if (function.getParameters().size() != expressionASTList.size())
+            throw new CompileException(ExceptionString.FunctionParametersNumberNotMatch);
         int preSP = Stack.getOffset();
-        for(int i = 0;i<expressionASTList.size();i++) {
+        for (int i = 0; i < expressionASTList.size(); i++) {
             instructionBlock.addInstructionBlock(expressionASTList.get(i).generateInstructions());
             instructionBlock.addInstructionBlock(Blocks.castTopType(instructionBlock.getType(), function.getParameters().get(i).getVariableType()));
         }
-        instructionBlock.addInstruction(new Instruction(OperationType.call, Table.getFunctionIndex(identifier),null));
+        instructionBlock.addInstruction(new Instruction(OperationType.call, Table.getFunctionIndex(identifier), null));
         Stack.setOffset(preSP);
         Stack.push(function.getName().getVariableType());
         instructionBlock.setType(function.getName().getVariableType());

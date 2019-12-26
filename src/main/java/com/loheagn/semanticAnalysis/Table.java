@@ -29,7 +29,7 @@ public class Table {
 
     /**
      * 向标识符表中插入一个变量
-     * 
+     *
      * @param variable 要插入的变量
      */
     public static void addVariable(Variable variable) throws CompileException {

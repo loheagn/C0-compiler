@@ -21,7 +21,7 @@ public class App {
         return grammaAnalyser.C0Program();
     }
 
-    private static List<String> compileASM()  {
+    private static List<String> compileASM() {
         return generateC0ProgramAST().generateInstructionsString();
     }
 
@@ -29,7 +29,7 @@ public class App {
         return generateC0ProgramAST().generateInstructionsBytes();
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         Options options = new Options();
         options.addOption(Option.builder("h").hasArg(false).required(false).desc("显示关于编译器使用的帮助").build());
         options.addOption(Option.builder("c").hasArg(false).required(false).desc("将输入的 c0 源代码翻译为二进制目标文件").build());
@@ -58,25 +58,25 @@ public class App {
         try {
             inFileName = commandLine.getArgList().get(0);
             String outFileName = "out";
-            if(commandLine.hasOption("o")){
+            if (commandLine.hasOption("o")) {
                 outFileName = commandLine.getOptionValue("o");
             }
-            if(commandLine.hasOption("s")){
+            if (commandLine.hasOption("s")) {
                 List<String> instructions = compileASM();
                 BufferedWriter writer = new BufferedWriter(new FileWriter(outFileName));
-                for(String s:instructions){
-                    writer.write(s+"\n");
+                for (String s : instructions) {
+                    writer.write(s + "\n");
                 }
                 writer.close();
-            } else if(commandLine.hasOption("c")) {
+            } else if (commandLine.hasOption("c")) {
                 List<Byte> bytes = compileBinary();
                 DataOutputStream outputStream = new DataOutputStream(new FileOutputStream(outFileName));
-                for(Byte byte1: bytes){
+                for (Byte byte1 : bytes) {
                     outputStream.write(byte1);
                 }
                 outputStream.close();
             }
-        } catch (CompileException e){
+        } catch (CompileException e) {
             System.out.println(e.toString());
             System.exit(1);
         } catch (IOException e) {
