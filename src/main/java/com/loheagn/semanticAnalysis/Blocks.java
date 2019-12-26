@@ -186,13 +186,13 @@ public class Blocks {
     }
 
     public static InstructionBlock printSpace() throws CompileException {
-        InstructionBlock instructionBlock = new InstructionBlock();
-        instructionBlock.addInstruction(new Instruction(OperationType.printl, null, null));
-        return instructionBlock;
+        return printChar(32);
     }
 
     public static InstructionBlock printLine() throws CompileException {
-        return printChar(10);
+        InstructionBlock instructionBlock = new InstructionBlock();
+        instructionBlock.addInstruction(new Instruction(OperationType.printl, null, null));
+        return instructionBlock;
     }
 
     public static InstructionBlock printChar(int ch) throws CompileException {
